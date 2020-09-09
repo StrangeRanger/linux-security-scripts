@@ -6,7 +6,7 @@
 # -----------
 # Hardens sshd by modifying '/etc/ssh/sshd_config'
 #
-# Version: v1.0.1
+# Version: v1.0.2
 # License: MIT License 
 #   Copyright (c) 2020 Hunter T.
 #
@@ -36,6 +36,21 @@
         exit 1
     fi
 
+    if [[ ! -f $config_file ]]; then
+        echo "${red}'sshd_config' doesn't exist" >&2
+        echo "${cyan}sshd-server may not be installed${nc}"
+        echo -e "\nExiting..."
+        exit 1
+    fi
+
+#
+################################################################################
+#
+# [ Main ]
+#
+################################################################################
+#
+    read -p "We will now harden sshd. Press [Enter] to continue."
 
     # Only backs up the original sshd_config
     if [[ ! -f $config_file_bak ]]; then
@@ -47,16 +62,6 @@
             exit 1
         }
     fi
-
-#
-################################################################################
-#
-# [ Main ]
-# Modifies /etc/ssh/sshd_config
-#
-################################################################################
-#
-    read -p "We will now harden sshd. Press [Enter] to continue."
 
     echo "Setting LogLevel VERBOSE..."
     sed -i 's/\(#\)\?LogLevel\(.*\)\?/LogLevel VERBOSE/g' "$config_file" ||
