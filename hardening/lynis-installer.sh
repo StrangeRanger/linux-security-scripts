@@ -6,7 +6,7 @@
 # ---------------
 # A script for installing and running lynis with recommended options
 #
-# Version: v1.0.0
+# Version: v1.0.1
 # License: MIT License
 #   Copyright (c) 2020 Hunter T.
 #
@@ -17,11 +17,13 @@
     nc=$'\033[0m'
 
     # Checks to see if this script was executed with root privilege
-    if ((EUID == 0)); then 
-        echo "${red}Do not run this script as root or with root privilege${nc}" >&2
+    if ((EUID != 0)); then 
+        echo "${red}Please run this script as or with root privilege${nc}" >&2
         echo -e "\nExiting..."
         exit 1
     fi
+
+    read -p "We will now download lynis. Press [Enter] to continue."
 
     echo "Changing working directory to ~/${USER_SUDO}..."
     cd /home/"$SUDO_USER" || {
