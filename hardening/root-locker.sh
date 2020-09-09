@@ -37,6 +37,14 @@
         exit 1
     fi
 
+#
+################################################################################
+#
+# [ Main ]
+#
+################################################################################
+#
+    read -p "We will now disable the root account. Press [Enter] to continue."
 
     # Only backs up the original shadow file
     if [[ ! -f $config_file_bak ]]; then
@@ -49,14 +57,6 @@
         }
     fi
 
-#
-################################################################################
-#
-# [ Main ]
-#
-################################################################################
-#
-	read -p "We will now disable the root account. Press [Enter] to continue."
 	echo "Disabling root account..."
 	passwd -dl root && echo -e "\n${green}The root account has been locked${nc}" || 
 		echo -e "\n${red}Failed to lock the root account${nc}"
