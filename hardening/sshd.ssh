@@ -6,6 +6,9 @@
 # -----------
 # Hardens sshd by modifying '/etc/ssh/sshd_config'
 #
+# Note: This configures sshd_config to the recommendations of the security
+# auditing tool knonw as Lynis (https://github.com/CISOfy/lynis)
+#
 # Version: v1.0.2
 # License: MIT License 
 #   Copyright (c) 2020 Hunter T.
