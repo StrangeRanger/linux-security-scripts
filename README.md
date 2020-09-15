@@ -1,6 +1,8 @@
 # Linux Security Scripts
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Maintenance](https://img.shields.io/maintenance/yes/2020)](https://github.com/StrangeRanger/linux-security-scripts/graphs/commit-activity)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 This repository is a collection of scripts designed to secure/harden Linux based distributions.
 
