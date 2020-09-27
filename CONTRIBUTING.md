@@ -1,20 +1,18 @@
 # Contributing
 
-When contributing to this repository, select a task, feature, or issue from the [issue tab](https://github.com/StrangeRanger/linux-security-scripts/issues). If you want to add a new feature, you can create a new issue and add it to the project. The same goes for bugs.
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
-## Planning
-
-It's **highly recommended** to plan and discuss with the repo maintainers about any new features, to ensure that it won't interfere with other features. If this step isn't done, it could result in the rejection of the pull request because it causes conflicts or doesn't follow contribution guidelines.
+Please note we have a code of conduct, please follow it in all your interactions with the project.
   
 ## Coding Style
 
-For this project, we use the coding style described [here](https://github.com/StrangeRanger/bash-style-guide).
+The coding style used for this repository can be found [at this repo](https://github.com/StrangeRanger/bash-style-guide).
 
 ## Commits
 
 All commits should follow the [Conventional Commits](https://www.conventionalcommits.org) style.
 
-All 'types' that can be used, include the following:
+All commit 'types' that can be used, include the following:
 
 | Commit Type | Title                    | Description                                                                                                 |
 | ----------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
