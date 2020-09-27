@@ -100,8 +100,8 @@
         echo "${red}Failed to set PermitEmptyPasswords no${nc}"
 
     echo "Setting ChallengeResponseAuthentication no..."
-    sed -i 's/\(#\)\?ChallengeResponseAuthentication\(.*\)\?/ChallengeResponseAuthentication no/g' "$config_file" ||
-        echo "${red}Failed to set ChallengeResponseAuthentication no${nc}"
+    sed -i 's/\(#\)\?ChallengeResponseAuthentication\(.*\)\?/ChallengeResponseAuthentication no/g' \
+        "$config_file" || echo "${red}Failed to set ChallengeResponseAuthentication no${nc}"
 
     echo "Setting UsePAM yes..."
     sed -i 's/\(#\)\?UsePAM\(.*\)\?/UsePAM yes/g' "$config_file" ||
