@@ -6,7 +6,7 @@
 # -----------
 # Locks the root account and erases it's current password
 #
-# Version: v1.0.2
+# Version: v1.0.3
 # License: MIT License 
 #   Copyright (c) 2020 Hunter T.
 #
@@ -16,12 +16,12 @@
 #
 ################################################################################
 #
-	config_file_bak="/etc/shadow.bak"
+    config_file_bak="/etc/shadow.bak"
     config_file="/etc/shadow"
-	green=$'\033[0;32m'
-	cyan=$'\033[0;36m'
-	red=$'\033[1;31m'
-	nc=$'\033[0m'
+    green=$'\033[0;32m'
+    cyan=$'\033[0;36m'
+    red=$'\033[1;31m'
+    nc=$'\033[0m'
 
 #
 ################################################################################
@@ -57,6 +57,6 @@
         }
     fi
 
-	echo "Disabling root account..."
-	passwd -dl root && echo -e "\n${green}The root account has been locked${nc}" || 
-		echo -e "\n${red}Failed to lock the root account${nc}"
+    echo "Disabling root account..."
+    passwd -dl root && echo -e "\n${green}The root account has been locked${nc}" || 
+        echo -e "\n${red}Failed to lock the root account${nc}"
