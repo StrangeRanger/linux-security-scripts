@@ -42,5 +42,5 @@
     chown -R root:root lynis
     
     echo -e "\n${green}Lynis has been downloaded to your system${nc}"
-    echo -e "${cyan}To peform a system scan with lynis, execute the following" \
+    echo -e "${cyan}To perform a system scan with lynis, execute the following" \
         "command in the lynis root directory: sudo ./lynis audit system"
