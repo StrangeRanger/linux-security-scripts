@@ -6,7 +6,7 @@
 # ---------------
 # A script for installing and running lynis with recommended options
 #
-# Version: v1.0.2
+# Version: v1.0.3
 # License: MIT License
 #   Copyright (c) 2020 Hunter T.
 #
@@ -26,9 +26,9 @@
 
     read -p "We will now download lynis. Press [Enter] to continue."
 
-    echo "Changing working directory to '~/${SUDO_USER}'..."
+    echo "Changing working directory to '/home/${SUDO_USER}'..."
     cd /home/"$SUDO_USER" || {
-        echo "${red}Failed to change working directory to '~/${SUDO_USER}'"
+        echo "${red}Failed to change working directory to '/home/${SUDO_USER}'"
         echo "${cyan}Lynis will download to '${PWD}'${nc}"
     }
 
