@@ -4,6 +4,8 @@
 
 This repository is a collection of scripts designed to secure/harden Linux based distributions.
 
+For information on each of the scripts, visit the [repo wiki](https://github.com/StrangeRanger/linux-security-scripts/wiki). Each page will provide information on the script in questions, example output, and a changelog.
+
 ## Other Resources
 
 This repository is still a work in progress. While it has scripts that can help secure Linux, it's not nearly enough to secure the system as much as it needs to be. Below is a list of other resources that you can use to help make Linux as secure as possible.
@@ -16,4 +18,4 @@ Below is a list of Linux Distributions that the security scripts have been teste
 
 | Distributions | Distro Versions |
 |---------------|-----------------|
-| Ubuntu        | 18.04           |
+| Ubuntu        | 18.04<br>20.04  |
