@@ -9,7 +9,7 @@
 # Note: This configures sshd_config to the recommendations of the security
 # auditing tool knonw as Lynis (https://github.com/CISOfy/lynis)
 #
-# Version: v1.0.2
+# Version: v1.0.3
 # License: MIT License 
 #   Copyright (c) 2020 Hunter T.
 #
@@ -17,18 +17,21 @@
 #
 # [ Variables ]
 #
-################################################################################
-#
+###
     config_file_bak="/etc/ssh/sshd_config.bak"
     config_file="/etc/ssh/sshd_config"
     cyan=$'\033[0;36m'
     red=$'\033[1;31m'
     nc=$'\033[0m'
-
+###
 #
+# End of [ Variables ]
+################################################################################
+
+
 ################################################################################
 #
-# [ Pre-main ]
+# [ Prepping ]
 #
 ################################################################################
 #
@@ -45,14 +48,17 @@
         echo -e "\nExiting..."
         exit 1
     fi
-
+###
 #
+# End of [ Prepping ]
+################################################################################
+
+
 ################################################################################
 #
 # [ Main ]
 #
-################################################################################
-#
+###
     read -p "We will now harden sshd. Press [Enter] to continue."
 
     # Only backs up the original sshd_config
@@ -145,4 +151,9 @@
     echo -e "\nDone"
     echo -e "${cyan}NOTE: It is highly recommended to manually:\n1) Change" \
         "sshd default port (22) to something else\n2) Add 'AllowUsers [your" \
-        "username]' to the bottom of 'sshd_config'"
+        "username]' to the bottom of 'sshd_config'${nc}"
+###
+#
+# End of [ Main ]
+################################################################################
+
