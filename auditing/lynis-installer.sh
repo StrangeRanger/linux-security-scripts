@@ -41,6 +41,6 @@
     echo "Changing ownership of lynis to root:root..."
     chown -R root:root lynis
     
-    echo -e "\n${green}Lynis has been downloaded to your system${nc}"
+    echo -e "\n${green}Lynis has been downloaded to your system"
     echo -e "${cyan}To perform a system scan with lynis, execute the following" \
-        "command in the lynis root directory: sudo ./lynis audit system"
+        "command in the lynis root directory: sudo ./lynis audit system${nc}"
