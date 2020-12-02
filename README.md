@@ -19,3 +19,4 @@ Below is a list of Linux Distributions that the security scripts have been teste
 | Distributions | Distro Versions |
 |---------------|-----------------|
 | Ubuntu        | 18.04<br>20.04  |
+| Debian        | 9<br>10         |
