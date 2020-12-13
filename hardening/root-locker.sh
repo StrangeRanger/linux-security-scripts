@@ -8,7 +8,7 @@
 #
 # Version: v1.0.3
 # License: MIT License 
-#   Copyright (c) 2020 Hunter T.
+#   Copyright (c) 2020-present Hunter T.
 #
 ################################################################################
 #
