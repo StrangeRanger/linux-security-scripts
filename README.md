@@ -1,6 +1,7 @@
 # Linux Security Scripts
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+![Repo Size](https://img.shields.io/github/repo-size/StrangeRanger/linux-security-scripts)
 
 This repository is a collection of scripts designed to secure/harden Linux based distributions.
 
