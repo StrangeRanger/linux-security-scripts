@@ -34,7 +34,7 @@ fi
 #### [ Main ]
 
 
-read -p "We will now download lynis. Press [Enter] to continue."
+read -rp "We will now download lynis. Press [Enter] to continue."
 
 echo "Changing working directory to '/home/${SUDO_USER}'..."
 cd /home/"$SUDO_USER" || {

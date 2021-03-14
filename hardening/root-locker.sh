@@ -36,7 +36,7 @@ fi
 #### [ Main ]
 
 
-read -p "We will now disable the root account. Press [Enter] to continue."
+read -rp "We will now disable the root account. Press [Enter] to continue."
 
 # Only backs up the original shadow file
 if [[ ! -f $config_file_bak ]]; then
