@@ -17,6 +17,7 @@ For information on each of the scripts, visit the [repo wiki](https://github.com
 This repository is still a work in progress. While it has scripts that can help secure Linux, it's not nearly enough to secure the system as much as it needs to be. Below is a list of other resources that you can use to help make Linux as secure as possible.
 
 - [Privacy.Sexy](https://github.com/undergroundwires/privacy.sexy) - Open-source tool to enforce privacy & security best-practices on Windows and macOS, because privacy is sexy 🍑🍆.
+- [SSH Audit](https://github.com/jtesta/ssh-audit) - SSH server & client auditing (banner, key exchange, encryption, mac, compression, compatibility, security, etc).
 
 ## Tested On
 
