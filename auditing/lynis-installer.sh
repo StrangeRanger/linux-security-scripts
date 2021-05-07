@@ -4,7 +4,7 @@
 #
 # Version: v1.0.3
 # License: MIT License
-#   Copyright (c) 2020-present Hunter T.
+#   Copyright (c) 2020-2021 Hunter T.
 #
 ################################################################################
 #### [ Variables ]
