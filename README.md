@@ -14,7 +14,7 @@ For information on each of the scripts, visit the [repo wiki](https://github.com
 
 ## Getting Started
 
-### Installing
+### Downloading
 
 All you need to do is download the repository. There are no binaries or anything to install.
 
@@ -32,8 +32,8 @@ Below is a list of Linux Distributions that all of the scripts have been tested 
 
 | Distributions | Distro Versions |
 | ------------- | --------------- |
-| Ubuntu        | 20.04<br>18.04  |
-| Debian        | 10<br>9         |
+| Ubuntu        | 20.04, 18.04    |
+| Debian        | 10, 9           |
 
 ## Other Resources
 
