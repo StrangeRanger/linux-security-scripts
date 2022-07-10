@@ -12,7 +12,7 @@ The coding style used for this repository can be found [at this repo](https://gi
 
 All commits should follow the [Conventional Commits](https://www.conventionalcommits.org) style.
 
-All commit types and aliases should fall under the ones listed in this [readme](https://github.com/pvdlg/conventional-changelog-metahub/blob/master/README.md#commit-types). _Ignore the emoji section_
+All commit types and aliases should fall under the ones listed [here](https://gist.github.com/StrangeRanger/b8153017fe8195a2d038890e28c9aa63). As a note, all commits prior to 2022-07-10 specifying `build`, should be regarded as `func`.
 
 ## Pull Request
 
