@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# Hardens sshd by modifying '/etc/ssh/sshd_config'.
+# Hardens sshd by modifying the configurations of '/etc/ssh/sshd_config'.
 #
 # Note: This configures sshd_config to the recommendations of the security auditing tool
 #       knonw as Lynis (https://github.com/CISOfy/lynis).
 #
-# Version: v1.0.3
+# Version: v1.1.0
 # License: MIT License
-#          Copyright (c) 2020-2021 Hunter T.
+#          Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 #### [ Variables ]
@@ -15,6 +15,7 @@
 
 config_file_bak="/etc/ssh/sshd_config.bak"
 config_file="/etc/ssh/sshd_config"
+green=$'\033[0;32m'
 cyan=$'\033[0;36m'
 red=$'\033[1;31m'
 nc=$'\033[0m'
@@ -29,15 +30,15 @@ nc=$'\033[0m'
 if [[ $EUID != 0 ]]; then
     echo "${red}Please run this script as or with root privilege$nc" >&2
     echo -e "\nExiting..."
-    exit 1
+    exit 2
 fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $config_file ]]; then
     echo "${red}'sshd_config' doesn't exist" >&2
-    echo "${cyan}sshd-server may not be installed$nc"
+    echo "${cyan}openssh-server may not be installed$nc"
     echo -e "\nExiting..."
-    exit 1
+    exit 3
 fi
 
 
@@ -48,97 +49,184 @@ fi
 
 read -rp "We will now harden sshd. Press [Enter] to continue."
 
-## Backup 'sshd_config' if 'sshd_config.bak' doesn't already exist.
-if [[ ! -f $config_file_bak ]]; then
-    echo "Backing up original 'sshd_config'..."
+if [[ -f $config_file_bak ]]; then
+    printf "A backup of 'sshd_config' already exists. "
+    read -rp "Do you want to overwrite it? [y/N] " choice
+
+    choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
+    case "$choice" in
+        y|yes)
+            echo "Overwriting backup of 'sshd_config'..."
+            rm $config_file_bak && cp $config_file $config_file_bak || {
+                echo "${red}Failed to back up sshd_config" >&2
+                echo "${cyan}Please create a backup of the original 'sshd_config'" \
+                    "before continuing$nc"
+                exit 1
+            }
+            ;;
+    esac
+else
+    echo "Backing up 'sshd_config'..."
     cp $config_file $config_file_bak || {
         echo "${red}Failed to back up sshd_config" >&2
-        echo "${cyan}Please create a backup of the original 'sshd_config'" \
-            "before continuing$nc"
+        echo "${cyan}Please create a backup of the original 'sshd_config' before" \
+            "continuing$nc"
         exit 1
     }
 fi
 
-echo "Setting LogLevel VERBOSE..."
-sed -i 's/\(#\)\?LogLevel\(.*\)\?/LogLevel VERBOSE/g' "$config_file" \
-    || echo "${red}Failed to set LogLevel VERBOSE$nc"
+if grep -Eq '^LogLevel VERBOSE$' "$config_file"; then
+    echo "LogLevel already set to 'VERBOSE'"
+elif grep -Eq '^#?LogLevel(.*)?$' "$config_file"; then
+    echo "Setting 'LogLevel VERBOSE'..."
+    sed -Ei 's/^#?LogLevel(.*)?$/LogLevel VERBOSE/gm' "$config_file" \
+        || echo "${red}Failed to set 'LogLevel VERBOSE'$nc"
+fi
 
-echo "Setting LoginGraceTime 30..."
-sed -i 's/\(#\)\?LoginGraceTime\(.*\)\?/LoginGraceTime 30/g' "$config_file" \
-    || echo "${red}Failed to set LoginGraceTime 30$nc"
+if grep -Eq '^LoginGraceTime 30$' "$config_file"; then
+    echo "LoginGraceTime already set to '30'"
+elif grep -Eq '^#?LoginGraceTime(.*)?$' "$config_file"; then
+    echo "Setting 'LoginGraceTime 30'..."
+    sed -Ei 's/^#?LoginGraceTime(.*)?$/LoginGraceTime 30/gm' "$config_file" \
+        || echo "${red}Failed to set 'LoginGraceTime 30'$nc"
+fi
 
-echo "Setting PermitRootLogin no..."
-sed -i 's/\(#\)\?PermitRootLogin\(.*\)\?/PermitRootLogin no/g' "$config_file" \
-    || echo "${red}Failed to set PermitRootLogin no$nc"
+if grep -Eq '^PermitRootLogin no$' "$config_file"; then
+    echo "PermitRootLogin already set to 'no'"
+elif grep -Eq '^#?PermitRootLogin(.*)?$' "$config_file"; then
+    echo "Setting 'PermitRootLogin no'..."
+    sed -Ei 's/^#?PermitRootLogin(.*)?$/PermitRootLogin no/gm' "$config_file" \
+        || echo "${red}Failed to set 'PermitRootLogin no'$nc"
+fi
 
-echo "Setting MaxAuthTries 3..."
-sed -i 's/\(#\)\?MaxAuthTries\(.*\)\?/MaxAuthTries 3/g' "$config_file" \
-    || echo "${red}Failed to set MaxAuthTries 3$nc"
+if grep -Eq '^MaxAuthTries 3$' "$config_file"; then
+    echo "MaxAuthTries already set to '3'"
+elif grep -Eq '^#?MaxAuthTries(.*)?$' "$config_file"; then
+    echo "Setting 'MaxAuthTries 3'..."
+    sed -Ei 's/^#?MaxAuthTries(.*)?$/MaxAuthTries 3/gm' "$config_file" \
+        || echo "${red}Failed to set 'MaxAuthTries 3'$nc"
+fi
 
-echo "Setting MaxSessions 2..."
-sed -i 's/\(#\)\?MaxSessions\(.*\)\?/MaxSessions 2/g' "$config_file" \
-    || echo "${red}Failed to set MaxSessions 2$nc"
+if grep -Eq '^MaxSessions 2$' "$config_file"; then
+    echo "MaxSessions already set to '2'"
+elif grep -Eq '^#?MaxSessions(.*)?$' "$config_file"; then
+    echo "Setting 'MaxSessions 2'..."
+    sed -Ei 's/^#?MaxSessions(.*)?$/MaxSessions 2/gm' "$config_file" \
+        || echo "${red}Failed to set 'MaxSessions 2'$nc"
+fi
 
-echo "Setting PubkeyAuthentication yes..."
-sed -i 's/\(#\)\?PubkeyAuthentication\(.*\)\?/PubkeyAuthentication yes/g' "$config_file" \
-    || echo "${red}Failed to set PubkeyAuthentication yes$nc"
+if grep -Eq '^PubkeyAuthentication yes$' "$config_file"; then
+    echo "PubkeyAuthentication already set to 'yes'"
+elif grep -Eq '^#?PubkeyAuthentication(.*)?$' "$config_file"; then
+    echo "Setting 'PubkeyAuthentication yes'..."
+    sed -Ei 's/^#?PubkeyAuthentication(.*)?$/PubkeyAuthentication yes/gm' "$config_file" \
+        || echo "${red}Failed to set 'PubkeyAuthentication yes'$nc"
+fi
 
-# Uncomment only if an ssh key has been set
-#echo "Setting PasswordAuthentication no..."
-#sed -i 's/\(#\)\?PasswordAuthentication\(.*\)\?/PasswordAuthentication no/g' "$config_file" \
-#    || echo "${red}Failed to set PasswordAuthentication no$nc"
+if grep -Eq '^PermitEmptyPasswords no$' "$config_file"; then
+    echo "PermitEmptyPasswords already set to 'no'"
+elif grep -Eq '^#?PermitEmptyPasswords(.*)?$' "$config_file"; then
+    echo "Setting 'PermitEmptyPasswords no'..."
+    sed -Ei 's/^#?PermitEmptyPasswords(.*)?$/PermitEmptyPasswords no/gm' "$config_file" \
+        || echo "${red}Failed to set 'PermitEmptyPasswords no'$nc"
+fi
 
-echo "Setting PermitEmptyPasswords no..."
-sed -i 's/\(#\)\?PermitEmptyPasswords\(.*\)\?/PermitEmptyPasswords no/g' "$config_file" \
-    || echo "${red}Failed to set PermitEmptyPasswords no$nc"
+if grep -Eq '^ChallengeResponseAuthentication no$' "$config_file"; then
+    echo "ChallengeResponseAuthentication already set to 'no'"
+elif grep -Eq '^#?ChallengeResponseAuthentication(.*)?$' "$config_file"; then
+    echo "Setting 'ChallengeResponseAuthentication no'..."
+    sed -Ei 's/^#?ChallengeResponseAuthentication(.*)?$/ChallengeResponseAuthentication no/gm' "$config_file" \
+        || echo "${red}Failed to set 'ChallengeResponseAuthentication no'$nc"
+fi
 
-echo "Setting ChallengeResponseAuthentication no..."
-sed -i 's/\(#\)\?ChallengeResponseAuthentication\(.*\)\?/ChallengeResponseAuthentication no/g' \
-    "$config_file" \ || echo "${red}Failed to set ChallengeResponseAuthentication no$nc"
+if grep -Eq '^KbdInteractiveAuthentication no$' "$config_file"; then
+    echo "KbdInteractiveAuthentication already set to 'no'"
+elif grep -Eq '^#?KbdInteractiveAuthentication(.*)?$' "$config_file"; then
+    echo "Setting 'KbdInteractiveAuthentication no'..."
+    sed -Ei 's/^#?KbdInteractiveAuthentication(.*)?$/KbdInteractiveAuthentication no/gm' "$config_file" \
+        || echo "${red}Failed to set 'KbdInteractiveAuthentication no'$nc"
+fi
 
-echo "Setting UsePAM yes..."
-sed -i 's/\(#\)\?UsePAM\(.*\)\?/UsePAM yes/g' "$config_file" \
-    || echo "${red}Failed to set UsePAM yes$nc"
+if grep -Eq '^UsePAM yes$' "$config_file"; then
+    echo "UsePAM already set to 'yes'"
+elif grep -Eq '^#?UsePAM(.*)?$' "$config_file"; then
+    echo "Setting 'UsePAM yes'..."
+    sed -Ei 's/^#?UsePAM(.*)?$/UsePAM yes/gm' "$config_file" \
+        || echo "${red}Failed to set 'UsePAM yes'$nc"
+fi
 
-echo "Setting AllowAgentForwarding no..."
-sed -i 's/\(#\)\?AllowAgentForwarding\(.*\)\?/AllowAgentForwarding no/g' "$config_file" \
-    || echo "${red}Failed to set AllowAgentForwarding no$nc"
+if grep -Eq '^AllowAgentForwarding no$' "$config_file"; then
+    echo "AllowAgentForwarding already set to 'no'"
+elif grep -Eq '^#?AllowAgentForwarding(.*)?$' "$config_file"; then
+    echo "Setting 'AllowAgentForwarding no'..."
+    sed -Ei 's/^#?AllowAgentForwarding(.*)?$/AllowAgentForwarding no/gm' "$config_file" \
+        || echo "${red}Failed to set 'AllowAgentForwarding no'$nc"
+fi
 
-echo "Setting AllowTcpForwarding no..."
-sed -i 's/\(#\)\?AllowTcpForwarding\(.*\)\?/AllowTcpForwarding no/g' "$config_file" \
-    || echo "${red}Failed to set AllowTcpForwarding no$nc"
+if grep -Eq '^AllowTcpForwarding no$' "$config_file"; then
+    echo "AllowTcpForwarding already set to 'no'"
+elif grep -Eq '^#?AllowTcpForwarding(.*)?$' "$config_file"; then
+    echo "Setting 'AllowTcpForwarding no'..."
+    sed -Ei 's/^#?AllowTcpForwarding(.*)?$/AllowTcpForwarding no/gm' "$config_file" \
+        || echo "${red}Failed to set 'AllowTcpForwarding no'$nc"
+fi
 
-echo "Setting X11Forwarding no..."
-sed -i 's/\(#\)\?X11Forwarding\(.*\)\?/X11Forwarding no/g' "$config_file" \
-    || echo "${red}Failed to set X11Forwarding no$nc"
+if grep -Eq '^X11Forwarding no$' "$config_file"; then
+    echo "X11Forwarding already set to 'no'"
+elif grep -Eq '^#?X11Forwarding(.*)?$' "$config_file"; then
+    echo "Setting 'X11Forwarding no'..."
+    sed -Ei 's/^#?X11Forwarding(.*)?$/X11Forwarding no/gm' "$config_file" \
+        || echo "${red}Failed to set 'X11Forwarding no'$nc"
+fi
 
-echo "Setting PrintMotd no..."
-sed -i 's/\(#\)\?PrintMotd\(.*\)\?/PrintMotd no/g' "$config_file" \
-    || echo "${red}Failed to set PrintMotd no$nc"
+if grep -Eq '^PrintMotd no$' "$config_file"; then
+    echo "PrintMotd already set to 'no'"
+elif grep -Eq '^#?PrintMotd(.*)?$' "$config_file"; then
+    echo "Setting 'PrintMotd no'..."
+    sed -Ei 's/^#?PrintMotd(.*)?$/PrintMotd no/gm' "$config_file" \
+        || echo "${red}Failed to set 'PrintMotd no'$nc"
+fi
 
-echo "Setting TCPKeepAlive no..."
-sed -i 's/\(#\)\?TCPKeepAlive\(.*\)\?/TCPKeepAlive no/g' "$config_file" \
-    || echo "${red}Failed to set TCPKeepAlive no$nc"
+if grep -Eq '^TCPKeepAlive no$' "$config_file"; then
+    echo "TCPKeepAlive already set to 'no'"
+elif grep -Eq '^#?TCPKeepAlive(.*)?$' "$config_file"; then
+    echo "Setting 'TCPKeepAlive no'..."
+    sed -Ei 's/^#?TCPKeepAlive(.*)?$/TCPKeepAlive no/gm' "$config_file" \
+        || echo "${red}Failed to set 'TCPKeepAlive no'$nc"
+fi
 
-echo "Setting Compression no..."
-sed -i 's/\(#\)\?Compression\(.*\)\?/Compression no/g' "$config_file" \
-    || echo "${red}Failed to set Compression no$nc"
+if grep -Eq '^Compression no$' "$config_file"; then
+    echo "Compression already set to 'no'"
+elif grep -Eq '^#?Compression(.*)?$' "$config_file"; then
+    echo "Setting 'Compression no'..."
+    sed -Ei 's/^#?Compression(.*)?$/Compression no/gm' "$config_file" \
+        || echo "${red}Failed to set 'Compression no'$nc"
+fi
 
-echo "Setting ClientAliveInterval 300..."
-sed -i 's/\(#\)\?ClientAliveInterval\(.*\)\?/ClientAliveInterval 300/g' "$config_file" \
-    || echo "${red}Failed to set ClientAliveInterval 30$nc"
+if grep -Eq '^ClientAliveInterval 300$' "$config_file"; then
+    echo "ClientAliveInterval already set to '300'"
+elif grep -Eq '^#?ClientAliveInterval(.*)?$' "$config_file"; then
+    echo "Setting 'ClientAliveInterval 300'..."
+    sed -Ei 's/^#?ClientAliveInterval(.*)?$/ClientAliveInterval 300/gm' "$config_file" \
+        || echo "${red}Failed to set 'ClientAliveInterval 300'$nc"
+fi
 
-echo "Setting ClientAliveCountMax 2..."
-sed -i 's/\(#\)\?ClientAliveCountMax\(.*\)\?/ClientAliveCountMax 2/g' "$config_file" \
-    || echo "${red}Failed to set ClientAliveCountMax 2$nc"
+if grep -Eq '^ClientAliveCountMax 2$' "$config_file"; then
+    echo "UseClientAliveCountMaxPAM already set to '2'"
+elif grep -Eq '^#?ClientAliveCountMax(.*)?$' "$config_file"; then
+    echo "Setting 'ClientAliveCountMax 2'..."
+    sed -Ei 's/^#?ClientAliveCountMax(.*)?$/ClientAliveCountMax 2/gm' "$config_file" \
+        || echo "${red}Failed to set 'ClientAliveCountMax 2'$nc"
+fi
 
 echo -e "\nRestarting sshd..."
 systemctl restart sshd
 
-echo -e "\nDone"
-echo -e "${cyan}NOTE: It is highly recommended to manually:\n1) Change sshd default" \
-    "port (22) to something else\n2) Add 'AllowUsers [your username]' to the bottom" \
-    "of 'sshd_config'$nc"
+echo -e "\n${green}Finished hardening sshd"
+echo -e "${cyan}It is highly recommended to manually:
+1) Change the default sshd port (22)
+2) Disable PasswordAuthentication in favor of PubkeyAuthentication
+3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'$nc"
 
 
 #### End of [ Main ]
