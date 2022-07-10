@@ -2,9 +2,9 @@
 #
 # A script for installing and running lynis with recommended options.
 #
-# Version: v1.0.3
+# Version: v1.0.4
 # License: MIT License
-#          Copyright (c) 2020-2021 Hunter T.
+#          Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 #### [ Variables ]
@@ -25,7 +25,7 @@ nc=$'\033[0m'
 if [[ $EUID != 0 ]]; then
     echo "${red}Please run this script as or with root privilege${nc}" >&2
     echo -e "\nExiting..."
-    exit 1
+    exit 2
 fi
 
 
