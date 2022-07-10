@@ -28,15 +28,15 @@ A majority of the scripts will require root privilege to be executed:
 
 ## Tested On
 
-Below is a list of Linux Distributions that all of the scripts have been tested and confirmed to work on.
+All of the scripts should work on most, if not all Linux Distributions. With that said, below is a list of Linux Distributions that the scripts have been officially tested and are confirmed to work on.
 
 | Distributions | Distro Versions |
 | ------------- | --------------- |
-| Ubuntu        | 20.04, 18.04    |
+| Ubuntu        | 22.04, 20.04    |
 | Debian        | 10, 9           |
 
 ## Other Resources
 
-This repository is still a work in progress. While it has scripts that can help secure Linux, it's not nearly enough to secure the system as much as it needs to be. Below is a list of other resources that you can use to help make your system as secure as possible.
+While this repository has scripts that can help secure Linux, it's not nearly enough to secure the system as much as it needs to be. Below is a list of other resources that you can/should use to help make your system as secure as possible.
 
 - [SSH Audit](https://github.com/jtesta/ssh-audit) - SSH server & client auditing (banner, key exchange, encryption, mac, compression, compatibility, security, etc).
