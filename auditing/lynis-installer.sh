@@ -2,7 +2,7 @@
 #
 # A script for installing and running lynis with recommended options.
 #
-# Version: v1.0.4
+# Version: v1.0.5
 # License: MIT License
 #          Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
 #
