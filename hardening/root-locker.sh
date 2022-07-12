@@ -38,6 +38,7 @@ read -rp "We will now disable the root account. Press [Enter] to continue."
 echo "Disabling root account..."
 passwd -dl root || {
     echo -e "\n${red}Failed to lock the root account${nc}"
+    echo -e "\nExiting..."
     exit 1
 }
 
