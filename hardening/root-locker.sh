@@ -10,9 +10,9 @@
 #### [ Variables ]
 
 
-green=$'\033[0;32m'
-red=$'\033[1;31m'
-nc=$'\033[0m'
+green="$(printf '\033[0;32m')"
+red="$(printf '\033[1;31m')"
+nc="$(printf '\033[0m')"
 
 
 ##### End of [ Variables ]
@@ -22,7 +22,7 @@ nc=$'\033[0m'
 
 ## Check if this script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
-    echo "${red}Please run this script as or with root privilege$nc" >&2
+    echo "${red}Please run this script as or with root privilege${nc}" >&2
     echo -e "\nExiting..."
     exit 2
 fi
@@ -37,11 +37,11 @@ read -rp "We will now disable the root account. Press [Enter] to continue."
 
 echo "Disabling root account..."
 passwd -dl root || {
-    echo -e "\n${red}Failed to lock the root account$nc"
+    echo -e "\n${red}Failed to lock the root account${nc}"
     exit 1
 }
 
-echo -e "\n${green}The root account has been locked$nc"
+echo -e "\n${green}The root account has been locked${nc}"
 
 
 #### End of [ Main ]

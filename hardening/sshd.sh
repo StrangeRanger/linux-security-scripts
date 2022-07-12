@@ -15,10 +15,10 @@
 
 config_file_bak="/etc/ssh/sshd_config.bak"
 config_file="/etc/ssh/sshd_config"
-green=$'\033[0;32m'
-cyan=$'\033[0;36m'
-red=$'\033[1;31m'
-nc=$'\033[0m'
+green="$(printf '\033[0;32m')"
+cyan="$(printf '\033[0;36m')"
+red="$(printf '\033[1;31m')"
+nc="$(printf '\033[0m')"
 
 
 ##### End of [ Variables ]
@@ -28,7 +28,7 @@ nc=$'\033[0m'
 
 ## Check if the script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
-    echo "${red}Please run this script as or with root privilege$nc" >&2
+    echo "${red}Please run this script as or with root privilege${nc}" >&2
     echo -e "\nExiting..."
     exit 2
 fi
@@ -36,7 +36,7 @@ fi
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $config_file ]]; then
     echo "${red}'sshd_config' doesn't exist" >&2
-    echo "${cyan}openssh-server may not be installed$nc"
+    echo "${cyan}openssh-server may not be installed${nc}"
     echo -e "\nExiting..."
     exit 3
 fi
@@ -60,7 +60,7 @@ if [[ -f $config_file_bak ]]; then
             rm $config_file_bak && cp $config_file $config_file_bak || {
                 echo "${red}Failed to back up sshd_config" >&2
                 echo "${cyan}Please create a backup of the original 'sshd_config'" \
-                    "before continuing$nc"
+                    "before continuing${nc}"
                 exit 1
             }
             ;;
@@ -70,7 +70,7 @@ else
     cp $config_file $config_file_bak || {
         echo "${red}Failed to back up sshd_config" >&2
         echo "${cyan}Please create a backup of the original 'sshd_config' before" \
-            "continuing$nc"
+            "continuing${nc}"
         exit 1
     }
 fi
@@ -80,7 +80,7 @@ if grep -Eq '^LogLevel VERBOSE$' "$config_file"; then
 elif grep -Eq '^#?LogLevel(.*)?$' "$config_file"; then
     echo "Setting 'LogLevel VERBOSE'..."
     sed -Ei 's/^#?LogLevel(.*)?$/LogLevel VERBOSE/gm' "$config_file" \
-        || echo "${red}Failed to set 'LogLevel VERBOSE'$nc"
+        || echo "${red}Failed to set 'LogLevel VERBOSE'${nc}"
 fi
 
 if grep -Eq '^LoginGraceTime 30$' "$config_file"; then
@@ -88,7 +88,7 @@ if grep -Eq '^LoginGraceTime 30$' "$config_file"; then
 elif grep -Eq '^#?LoginGraceTime(.*)?$' "$config_file"; then
     echo "Setting 'LoginGraceTime 30'..."
     sed -Ei 's/^#?LoginGraceTime(.*)?$/LoginGraceTime 30/gm' "$config_file" \
-        || echo "${red}Failed to set 'LoginGraceTime 30'$nc"
+        || echo "${red}Failed to set 'LoginGraceTime 30'${nc}"
 fi
 
 if grep -Eq '^PermitRootLogin no$' "$config_file"; then
@@ -96,7 +96,7 @@ if grep -Eq '^PermitRootLogin no$' "$config_file"; then
 elif grep -Eq '^#?PermitRootLogin(.*)?$' "$config_file"; then
     echo "Setting 'PermitRootLogin no'..."
     sed -Ei 's/^#?PermitRootLogin(.*)?$/PermitRootLogin no/gm' "$config_file" \
-        || echo "${red}Failed to set 'PermitRootLogin no'$nc"
+        || echo "${red}Failed to set 'PermitRootLogin no'${nc}"
 fi
 
 if grep -Eq '^MaxAuthTries 3$' "$config_file"; then
@@ -104,7 +104,7 @@ if grep -Eq '^MaxAuthTries 3$' "$config_file"; then
 elif grep -Eq '^#?MaxAuthTries(.*)?$' "$config_file"; then
     echo "Setting 'MaxAuthTries 3'..."
     sed -Ei 's/^#?MaxAuthTries(.*)?$/MaxAuthTries 3/gm' "$config_file" \
-        || echo "${red}Failed to set 'MaxAuthTries 3'$nc"
+        || echo "${red}Failed to set 'MaxAuthTries 3'${nc}"
 fi
 
 if grep -Eq '^MaxSessions 2$' "$config_file"; then
@@ -112,7 +112,7 @@ if grep -Eq '^MaxSessions 2$' "$config_file"; then
 elif grep -Eq '^#?MaxSessions(.*)?$' "$config_file"; then
     echo "Setting 'MaxSessions 2'..."
     sed -Ei 's/^#?MaxSessions(.*)?$/MaxSessions 2/gm' "$config_file" \
-        || echo "${red}Failed to set 'MaxSessions 2'$nc"
+        || echo "${red}Failed to set 'MaxSessions 2'${nc}"
 fi
 
 if grep -Eq '^PubkeyAuthentication yes$' "$config_file"; then
@@ -120,7 +120,7 @@ if grep -Eq '^PubkeyAuthentication yes$' "$config_file"; then
 elif grep -Eq '^#?PubkeyAuthentication(.*)?$' "$config_file"; then
     echo "Setting 'PubkeyAuthentication yes'..."
     sed -Ei 's/^#?PubkeyAuthentication(.*)?$/PubkeyAuthentication yes/gm' "$config_file" \
-        || echo "${red}Failed to set 'PubkeyAuthentication yes'$nc"
+        || echo "${red}Failed to set 'PubkeyAuthentication yes'${nc}"
 fi
 
 if grep -Eq '^PermitEmptyPasswords no$' "$config_file"; then
@@ -128,7 +128,7 @@ if grep -Eq '^PermitEmptyPasswords no$' "$config_file"; then
 elif grep -Eq '^#?PermitEmptyPasswords(.*)?$' "$config_file"; then
     echo "Setting 'PermitEmptyPasswords no'..."
     sed -Ei 's/^#?PermitEmptyPasswords(.*)?$/PermitEmptyPasswords no/gm' "$config_file" \
-        || echo "${red}Failed to set 'PermitEmptyPasswords no'$nc"
+        || echo "${red}Failed to set 'PermitEmptyPasswords no'${nc}"
 fi
 
 if grep -Eq '^ChallengeResponseAuthentication no$' "$config_file"; then
@@ -136,7 +136,7 @@ if grep -Eq '^ChallengeResponseAuthentication no$' "$config_file"; then
 elif grep -Eq '^#?ChallengeResponseAuthentication(.*)?$' "$config_file"; then
     echo "Setting 'ChallengeResponseAuthentication no'..."
     sed -Ei 's/^#?ChallengeResponseAuthentication(.*)?$/ChallengeResponseAuthentication no/gm' "$config_file" \
-        || echo "${red}Failed to set 'ChallengeResponseAuthentication no'$nc"
+        || echo "${red}Failed to set 'ChallengeResponseAuthentication no'${nc}"
 fi
 
 if grep -Eq '^KbdInteractiveAuthentication no$' "$config_file"; then
@@ -144,7 +144,7 @@ if grep -Eq '^KbdInteractiveAuthentication no$' "$config_file"; then
 elif grep -Eq '^#?KbdInteractiveAuthentication(.*)?$' "$config_file"; then
     echo "Setting 'KbdInteractiveAuthentication no'..."
     sed -Ei 's/^#?KbdInteractiveAuthentication(.*)?$/KbdInteractiveAuthentication no/gm' "$config_file" \
-        || echo "${red}Failed to set 'KbdInteractiveAuthentication no'$nc"
+        || echo "${red}Failed to set 'KbdInteractiveAuthentication no'${nc}"
 fi
 
 if grep -Eq '^UsePAM yes$' "$config_file"; then
@@ -152,7 +152,7 @@ if grep -Eq '^UsePAM yes$' "$config_file"; then
 elif grep -Eq '^#?UsePAM(.*)?$' "$config_file"; then
     echo "Setting 'UsePAM yes'..."
     sed -Ei 's/^#?UsePAM(.*)?$/UsePAM yes/gm' "$config_file" \
-        || echo "${red}Failed to set 'UsePAM yes'$nc"
+        || echo "${red}Failed to set 'UsePAM yes'${nc}"
 fi
 
 if grep -Eq '^AllowAgentForwarding no$' "$config_file"; then
@@ -160,7 +160,7 @@ if grep -Eq '^AllowAgentForwarding no$' "$config_file"; then
 elif grep -Eq '^#?AllowAgentForwarding(.*)?$' "$config_file"; then
     echo "Setting 'AllowAgentForwarding no'..."
     sed -Ei 's/^#?AllowAgentForwarding(.*)?$/AllowAgentForwarding no/gm' "$config_file" \
-        || echo "${red}Failed to set 'AllowAgentForwarding no'$nc"
+        || echo "${red}Failed to set 'AllowAgentForwarding no'${nc}"
 fi
 
 if grep -Eq '^AllowTcpForwarding no$' "$config_file"; then
@@ -168,7 +168,7 @@ if grep -Eq '^AllowTcpForwarding no$' "$config_file"; then
 elif grep -Eq '^#?AllowTcpForwarding(.*)?$' "$config_file"; then
     echo "Setting 'AllowTcpForwarding no'..."
     sed -Ei 's/^#?AllowTcpForwarding(.*)?$/AllowTcpForwarding no/gm' "$config_file" \
-        || echo "${red}Failed to set 'AllowTcpForwarding no'$nc"
+        || echo "${red}Failed to set 'AllowTcpForwarding no'${nc}"
 fi
 
 if grep -Eq '^X11Forwarding no$' "$config_file"; then
@@ -176,7 +176,7 @@ if grep -Eq '^X11Forwarding no$' "$config_file"; then
 elif grep -Eq '^#?X11Forwarding(.*)?$' "$config_file"; then
     echo "Setting 'X11Forwarding no'..."
     sed -Ei 's/^#?X11Forwarding(.*)?$/X11Forwarding no/gm' "$config_file" \
-        || echo "${red}Failed to set 'X11Forwarding no'$nc"
+        || echo "${red}Failed to set 'X11Forwarding no'${nc}"
 fi
 
 if grep -Eq '^PrintMotd no$' "$config_file"; then
@@ -184,7 +184,7 @@ if grep -Eq '^PrintMotd no$' "$config_file"; then
 elif grep -Eq '^#?PrintMotd(.*)?$' "$config_file"; then
     echo "Setting 'PrintMotd no'..."
     sed -Ei 's/^#?PrintMotd(.*)?$/PrintMotd no/gm' "$config_file" \
-        || echo "${red}Failed to set 'PrintMotd no'$nc"
+        || echo "${red}Failed to set 'PrintMotd no'${nc}"
 fi
 
 if grep -Eq '^TCPKeepAlive no$' "$config_file"; then
@@ -192,7 +192,7 @@ if grep -Eq '^TCPKeepAlive no$' "$config_file"; then
 elif grep -Eq '^#?TCPKeepAlive(.*)?$' "$config_file"; then
     echo "Setting 'TCPKeepAlive no'..."
     sed -Ei 's/^#?TCPKeepAlive(.*)?$/TCPKeepAlive no/gm' "$config_file" \
-        || echo "${red}Failed to set 'TCPKeepAlive no'$nc"
+        || echo "${red}Failed to set 'TCPKeepAlive no'${nc}"
 fi
 
 if grep -Eq '^Compression no$' "$config_file"; then
@@ -200,7 +200,7 @@ if grep -Eq '^Compression no$' "$config_file"; then
 elif grep -Eq '^#?Compression(.*)?$' "$config_file"; then
     echo "Setting 'Compression no'..."
     sed -Ei 's/^#?Compression(.*)?$/Compression no/gm' "$config_file" \
-        || echo "${red}Failed to set 'Compression no'$nc"
+        || echo "${red}Failed to set 'Compression no'${nc}"
 fi
 
 if grep -Eq '^ClientAliveInterval 300$' "$config_file"; then
@@ -208,7 +208,7 @@ if grep -Eq '^ClientAliveInterval 300$' "$config_file"; then
 elif grep -Eq '^#?ClientAliveInterval(.*)?$' "$config_file"; then
     echo "Setting 'ClientAliveInterval 300'..."
     sed -Ei 's/^#?ClientAliveInterval(.*)?$/ClientAliveInterval 300/gm' "$config_file" \
-        || echo "${red}Failed to set 'ClientAliveInterval 300'$nc"
+        || echo "${red}Failed to set 'ClientAliveInterval 300'${nc}"
 fi
 
 if grep -Eq '^ClientAliveCountMax 2$' "$config_file"; then
@@ -216,7 +216,7 @@ if grep -Eq '^ClientAliveCountMax 2$' "$config_file"; then
 elif grep -Eq '^#?ClientAliveCountMax(.*)?$' "$config_file"; then
     echo "Setting 'ClientAliveCountMax 2'..."
     sed -Ei 's/^#?ClientAliveCountMax(.*)?$/ClientAliveCountMax 2/gm' "$config_file" \
-        || echo "${red}Failed to set 'ClientAliveCountMax 2'$nc"
+        || echo "${red}Failed to set 'ClientAliveCountMax 2'${nc}"
 fi
 
 echo -e "\nRestarting sshd..."
@@ -226,7 +226,7 @@ echo -e "\n${green}Finished hardening sshd"
 echo -e "${cyan}It is highly recommended to manually:
 1) Change the default sshd port (22)
 2) Disable PasswordAuthentication in favor of PubkeyAuthentication
-3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'$nc"
+3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'${nc}"
 
 
 #### End of [ Main ]
