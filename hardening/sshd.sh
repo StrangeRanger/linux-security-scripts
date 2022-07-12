@@ -21,7 +21,26 @@ red="$(printf '\033[1;31m')"
 nc="$(printf '\033[0m')"
 
 
-##### End of [ Variables ]
+#### End of [ Variables ]
+########################################################################################
+#### [ Functions ]
+
+
+clean_up() {
+    ####
+    # Function Info: Cleanly exit the script.
+    #
+    # Parameters:
+    #   $1 - required
+    #       Exit status code.
+    ####
+
+    echo -e "\nExiting..."
+    exit "$1"
+}
+
+
+#### End of [ Functions ]
 ########################################################################################
 #### [ Prepping ]
 
@@ -29,16 +48,14 @@ nc="$(printf '\033[0m')"
 ## Check if the script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
     echo "${red}Please run this script as or with root privilege${nc}" >&2
-    echo -e "\nExiting..."
-    exit 2
+    clean_up 2  
 fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $config_file ]]; then
     echo "${red}'sshd_config' doesn't exist" >&2
     echo "${cyan}openssh-server may not be installed${nc}"
-    echo -e "\nExiting..."
-    exit 3
+    clean_up 3
 fi
 
 
@@ -61,10 +78,10 @@ if [[ -f $config_file_bak ]]; then
                 echo "${red}Failed to back up sshd_config" >&2
                 echo "${cyan}Please create a backup of the original 'sshd_config'" \
                     "before continuing${nc}"
-                exit 1
+                clean_up 1
             }
             ;;
-        *) exit 0 ;;
+        *) clean_up 0 ;;
     esac
 else
     echo "Backing up 'sshd_config'..."
@@ -72,7 +89,7 @@ else
         echo "${red}Failed to back up sshd_config" >&2
         echo "${cyan}Please create a backup of the original 'sshd_config' before" \
             "continuing${nc}"
-        exit 1
+        clean_up 1
     }
 fi
 
