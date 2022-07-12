@@ -5,7 +5,7 @@
 # Note: This configures sshd_config to the recommendations of the security auditing tool
 #       knonw as Lynis (https://github.com/CISOfy/lynis).
 #
-# Version: v1.1.0
+# Version: v1.1.1
 # License: MIT License
 #          Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
 #
@@ -64,6 +64,7 @@ if [[ -f $config_file_bak ]]; then
                 exit 1
             }
             ;;
+        *) exit 0 ;;
     esac
 else
     echo "Backing up 'sshd_config'..."
