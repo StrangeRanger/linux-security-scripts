@@ -81,7 +81,6 @@ if [[ -f $config_file_bak ]]; then
                 clean_up 1
             }
             ;;
-        *) clean_up 0 ;;
     esac
 else
     echo "Backing up 'sshd_config'..."
