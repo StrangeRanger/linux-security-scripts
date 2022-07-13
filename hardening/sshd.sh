@@ -5,7 +5,7 @@
 # Note: This configures sshd_config to the recommendations of the security auditing tool
 #       knonw as Lynis (https://github.com/CISOfy/lynis).
 #
-# Version: v1.1.1
+# Version: v1.1.2
 # License: MIT License
 #          Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
 #
