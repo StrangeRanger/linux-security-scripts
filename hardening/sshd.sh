@@ -48,14 +48,14 @@ clean_up() {
 ## Check if the script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
     echo "${red}Please run this script as or with root privilege${nc}" >&2
-    clean_up 2  
+    clean_up 1  
 fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $config_file ]]; then
     echo "${red}'sshd_config' doesn't exist" >&2
     echo "${cyan}openssh-server may not be installed${nc}"
-    clean_up 3
+    clean_up 1
 fi
 
 
