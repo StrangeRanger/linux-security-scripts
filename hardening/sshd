@@ -74,6 +74,7 @@ if [[ -f $config_file_bak ]]; then
     case "$choice" in
         y|yes)
             echo "Overwriting backup of 'sshd_config'..."
+            # shellcheck disable=SC2015
             rm $config_file_bak && cp $config_file $config_file_bak || {
                 echo "${red}Failed to back up sshd_config" >&2
                 echo "${cyan}Please create a backup of the original 'sshd_config'" \
