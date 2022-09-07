@@ -26,15 +26,14 @@ nc="$(printf '\033[0m')"
 #### [ Functions ]
 
 
+########
+# Cleanly exit the script.
+#
+# Arguments:
+#   $1 - required
+#       Exit status code.
+########
 clean_up() {
-    ####
-    # Function Info: Cleanly exit the script.
-    #
-    # Parameters:
-    #   $1 - required
-    #       Exit status code.
-    ####
-
     echo -e "\nExiting..."
     exit "$1"
 }
@@ -48,7 +47,7 @@ clean_up() {
 ## Check if the script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
     echo "${red}Please run this script as or with root privilege${nc}" >&2
-    clean_up 1  
+    clean_up 1
 fi
 
 ## Confirm that 'sshd_config' exists.
