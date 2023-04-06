@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020-2022 Hunter T. (StrangeRanger)
+Copyright (c) 2020-2023 Hunter T. (StrangeRanger)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
