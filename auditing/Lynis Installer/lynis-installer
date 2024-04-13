@@ -1,6 +1,9 @@
 #!/bin/bash
 #
-# A script for installing and running lynis with recommended options.
+# This script downloads a security auditing tool called Lynis, designed to scan a system
+# and identify security issues, and provides recommendations on how to better secure it.
+# Lynis, unless an error is encountered, will always be downloaded to the user's root
+# directory (/home/USERNAME/).
 #
 # Version: v1.0.6
 # License: MIT License

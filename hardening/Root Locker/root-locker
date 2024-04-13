@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Locks the root account and erases it's current password.
+# This script locks and removes the root account's password (if one is set). This
+# prevents users from successfully logging into the root account via su. Note that it
+# doesn't prevent users from becoming root via methods such as sudo su.
 #
 # Version: v1.0.6
 # License: MIT License

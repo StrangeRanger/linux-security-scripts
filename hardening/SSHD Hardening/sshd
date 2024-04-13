@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Hardens sshd by modifying the configurations of '/etc/ssh/sshd_config'.
+# This script hardens the sshd-server, by modifying it's configuration file
+# (sshd_config).
 #
 # Note: This configures sshd_config to the recommendations of the security auditing tool
 #       knonw as Lynis (https://github.com/CISOfy/lynis).
