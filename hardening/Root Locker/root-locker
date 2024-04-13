@@ -2,12 +2,12 @@
 #
 # Locks the root account and erases it's current password.
 #
-# Version: v1.0.5
+# Version: v1.0.6
 # License: MIT License
-#          Copyright (c) 2020-2023 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
 #
 ########################################################################################
-#### [ Variables ]
+####[ Script Wide Variables ]###########################################################
 
 
 green="$(printf '\033[0;32m')"
@@ -15,9 +15,7 @@ red="$(printf '\033[1;31m')"
 nc="$(printf '\033[0m')"
 
 
-##### End of [ Variables ]
-########################################################################################
-#### [ Prepping ]
+####[ Prepping ]########################################################################
 
 
 ## Check if this script was executed with root privilege.
@@ -28,9 +26,7 @@ if [[ $EUID != 0 ]]; then
 fi
 
 
-#### End of [ Prepping ]
-########################################################################################
-#### [ Main ]
+####[ Main ]############################################################################
 
 
 read -rp "We will now disable the root account. Press [Enter] to continue."
@@ -43,7 +39,3 @@ passwd -dl root || {
 }
 
 echo -e "\n${green}The root account has been locked${nc}"
-
-
-#### End of [ Main ]
-########################################################################################
