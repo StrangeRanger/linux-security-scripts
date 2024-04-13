@@ -1,16 +1,17 @@
 #!/bin/bash
 #
-# Hardens sshd by modifying the configurations of '/etc/ssh/sshd_config'.
+# This script hardens the sshd-server, by modifying it's configuration file
+# (sshd_config).
 #
 # Note: This configures sshd_config to the recommendations of the security auditing tool
 #       knonw as Lynis (https://github.com/CISOfy/lynis).
 #
 # Version: v1.1.2
 # License: MIT License
-#          Copyright (c) 2020-2023 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
 #
 ########################################################################################
-#### [ Variables ]
+####[ Script Wide Variables ]###########################################################
 
 
 config_file_bak="/etc/ssh/sshd_config.bak"
@@ -21,27 +22,25 @@ red="$(printf '\033[1;31m')"
 nc="$(printf '\033[0m')"
 
 
-#### End of [ Variables ]
-########################################################################################
-#### [ Functions ]
+####[ Functions ]#######################################################################
 
 
-########
+####
 # Cleanly exit the script.
 #
 # Arguments:
-#   $1 - required
-#       Exit status code.
-########
+#   - $1: exit_code (Required)
+#       - Description: The exit code to exit the script with.
+####
 clean_up() {
+    local exit_code="$1"
+
     echo -e "\nExiting..."
-    exit "$1"
+    exit "$exit_code"
 }
 
 
-#### End of [ Functions ]
-########################################################################################
-#### [ Prepping ]
+####[ Prepping ]########################################################################
 
 
 ## Check if the script was executed with root privilege.
@@ -58,9 +57,7 @@ if [[ ! -f $config_file ]]; then
 fi
 
 
-#### End of [ Prepping ]
-########################################################################################
-#### [ Main ]
+####[ Main ]############################################################################
 
 
 read -rp "We will now harden sshd. Press [Enter] to continue."
@@ -244,7 +241,3 @@ echo -e "${cyan}It is highly recommended to manually:
 1) Change the default sshd port (22)
 2) Disable PasswordAuthentication in favor of PubkeyAuthentication
 3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'${nc}"
-
-
-#### End of [ Main ]
-########################################################################################
