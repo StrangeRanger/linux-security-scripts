@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - No longer requires root permission to run the script.
 - Won't download lynis if is already present on the system.
 - Improved syntax of the script.
+- Rename script to `lynis-installer.bash`. 
 
 ## v1.0.6 - 2024-04-13
 
