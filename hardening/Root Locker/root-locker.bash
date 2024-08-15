@@ -32,7 +32,7 @@ read -rp "We will now disable the root account. Press [Enter] to continue."
 
 echo "Disabling root account..."
 usermod -L root || {
-    echo -e "\n${C_RED}Failed to lock the root account${C_NC}" >&2
+    echo -e "${C_RED}ERROR:${C_NC} Failed to lock the root account" >&2
     echo -e "\nExiting..."
     exit 1
 }
