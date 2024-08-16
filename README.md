@@ -6,7 +6,7 @@
 
 This repository is a collection of scripts designed to secure/harden Linux based Distributions.
 
-For information on each of the scripts, visit the [repo wiki](https://github.com/StrangeRanger/linux-security-scripts/wiki). Each page will provide information on the script in question, example output, and a changelog.
+<!-- TODO: Add a list of all avaliable scripts and what they do. -->
 
 ## Getting Started
 
