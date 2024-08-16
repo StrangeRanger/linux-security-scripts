@@ -20,7 +20,7 @@ Complete rewrite of the script. Below are just some of the differences in the ne
 - Improved error handling.
 - The script has been renamed to `harden-sshd.bash`.
 
-## v1.1.3 - 2024-04-13
+## v1.1.2 - 2024-04-13
 
 ### Changed
 
