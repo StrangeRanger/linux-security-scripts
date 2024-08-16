@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.0 - 2024-08-15
+
+Complete rewrite of the script. Below are just some of the differences in the new version.
+
+### Added
+
+- Can catch common error signals.
+- Output is now colored to better differentiate between different types of messages.
+
+### Changes
+
+- Improved the script's structure.
+- Improved regex and replacement of sshd configurations.
+- Improved error handling.
+- The script has been renamed to `harden-sshd.bash`.
+
 ## v1.1.3 - 2024-04-13
 
 ### Changed
