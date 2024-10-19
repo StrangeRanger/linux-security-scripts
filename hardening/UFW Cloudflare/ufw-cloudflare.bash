@@ -1,6 +1,10 @@
 #!/bin/bash
 #
+# Sets up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
+# Version: v1.0.0-beta.1
+# License: MIT License
+#          Copyright (c) 2024 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 ####[ Global Variables ]################################################################
@@ -20,16 +24,15 @@ stage=0
 
 
 ####
-# Description:
-#   Check if a UFW rule exists for a specific IP address and port.
+# Check if a UFW rule exists for a specific IP address and port.
 #
-# Arguments:
+# PARAMETERS:
 #   - $1: ip (Required)
 #       - The IP address to check.
 #   - $2: port (Required)
 #       - The port to check.
 #
-# Return:
+# RETURN:
 #   - 0: The rule exists.
 #   - ?: The rule does not exist.
 ufw_rule_exists() {
@@ -40,11 +43,10 @@ ufw_rule_exists() {
 }
 
 ####
-# Description:
-#   Retrieves the rule number of all Cloudflare IP rules currently set in UFW, then
-#   stores them in an array.
+# Retrieves the rule number of all Cloudflare IP rules currently set in UFW, then
+# stores them in an array.
 #
-# Arguments:
+# PARAMETERS:
 #   - $1: string_to_grep (Required)
 #       - The string to grep for in the UFW status output.
 #       - Acceptable values:
@@ -69,9 +71,8 @@ get_set_cloudflare_rule_numbers() {
 }
 
 ####
-# Description:
-#  Retrieves the IP addresses of all Cloudflare IP rules currently set in UFW, then
-#  stores them in an array.
+# Retrieves the IP addresses of all Cloudflare IP rules currently set in UFW, then
+# stores them in an array.
 get_set_cloudflare_ip_ranges() {
     while IFS= read -r line; do
         ip=$(echo "$line" | awk '{print $3}')  # Extract the IP address.
@@ -80,8 +81,7 @@ get_set_cloudflare_ip_ranges() {
 }
 
 ####
-# Description:
-#   Set the new Cloudflare IP ranges in UFW, retrieved from the Cloudflare website.
+# Set the new Cloudflare IP ranges in UFW, retrieved from the Cloudflare website.
 set_new_cloudflare_ip_ranges() {
     for ip in "${new_cloudflare_ip_ranges[@]}"; do
         ufw_rule_exists "$ip" "80,443" \
@@ -90,8 +90,7 @@ set_new_cloudflare_ip_ranges() {
 }
 
 ####
-# Description:
-#   Restores the previous (non-new) Cloudflare IP ranges in UFW.
+# Restores the previous (non-new) Cloudflare IP ranges in UFW.
 restore_current_cloudflare_ip_ranges() {
     for ip in "${current_cloudflare_ip_ranges[@]}"; do
         ufw_rule_exists "$ip" "80,443" \
@@ -100,8 +99,7 @@ restore_current_cloudflare_ip_ranges() {
 }
 
 ####
-# Description:
-#   Deletes all Cloudflare IP rules currently set in UFW.
+# Deletes all Cloudflare IP rules currently set in UFW.
 delete_set_cloudflare_rules() {
     get_set_cloudflare_rule_numbers "0"
 
@@ -112,8 +110,7 @@ delete_set_cloudflare_rules() {
 }
 
 ####
-# Description:
-#   Cleanup function to close ports 80 and 443 from any IP address.
+# Cleanup function to close ports 80 and 443 from any IP address.
 cleanup() {
     case $stage in
         2)
