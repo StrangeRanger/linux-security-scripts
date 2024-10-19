@@ -1,9 +1,6 @@
 #!/bin/bash
 #
-# Name: root-locker.bash
-#
-# Description:
-#   This script locks the root account, preventing users from direct logins as root.
+# This script locks the root account, preventing users from directly logging in as root.
 #
 # Note:
 #   Locking the root account doesn't prevent users from using something like `sudo su`

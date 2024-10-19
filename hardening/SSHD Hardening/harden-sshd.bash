@@ -1,14 +1,10 @@
 #!/bin/bash
 #
-# Name: harden-sshd.bash
-#
-# Description:
-#   This script hardens the sshd-server, by modifying it's configuration file
-#   (sshd_config).
+# This script hardens the ssh server by modifying its configuration file, 'sshd_config'.
 #
 # Note:
-#   This configures sshd_config to the recommendations of the security auditing tool
-#   knonw as Lynis (https://github.com/CISOfy/lynis).
+#   These configurations align with the recommendations of the security auditing tool
+#   known as Lynis (https://github.com/CISOfy/lynis).
 #
 # Version: v2.0.0
 # License: MIT License
@@ -31,11 +27,11 @@ C_NC="$(printf '\033[0m')"
 readonly C_GREEN C_CYAN C_RED C_NC
 
 ## Short-hand colorized messages.
-C_SUCCESS="${C_GREEN}==>${C_NC} "
-C_WARNING="${C_YELLOW}==>${C_NC} "
-C_ERROR="${C_RED}ERROR:${C_NC} "
-C_INFO="${C_BLUE}==>${C_NC} "
-C_NOTE="${C_CYAN}==>${C_NC} "
+readonly C_SUCCESS="${C_GREEN}==>${C_NC} "
+readonly C_WARNING="${C_YELLOW}==>${C_NC} "
+readonly C_ERROR="${C_RED}ERROR:${C_NC} "
+readonly C_INFO="${C_BLUE}==>${C_NC} "
+readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
 # Associative array containing the configuration settings for sshd_config.
 declare -A C_SSHD_CONFIG=(
@@ -83,10 +79,9 @@ readonly C_SSHD_CONFIG
 
 
 ####
-# Description:
-#   Cleanly exit the script.
+# Cleanly exit the script.
 #
-# Arguments:
+# PARAMETERS:
 #   - $1: exit_code (Required)
 #       - The exit code to exit the script with.
 clean_exit() {

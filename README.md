@@ -6,7 +6,7 @@
 
 This repository is a collection of scripts designed to secure/harden Linux based Distributions.
 
-For information on each of the scripts, visit the [repo wiki](https://github.com/StrangeRanger/linux-security-scripts/wiki). Each page will provide information on the script in question, example output, and a changelog.
+<!-- TODO: Add a list of all avaliable scripts and what they do. -->
 
 ## Getting Started
 
@@ -26,10 +26,10 @@ A majority of the scripts will require root privilege to be executed:
 
 All of the scripts should work on most, if not all Linux Distributions. With that said, below is a list of Linux Distributions that the scripts have been officially tested and are confirmed to work on.
 
-| Distributions | Distro Versions |
-| ------------- | --------------- |
-| Ubuntu        | 22.04, 20.04    |
-| Debian        | 10, 9           |
+| Distributions | Distro Versions        |
+| ------------- | ---------------------- |
+| Ubuntu        | 24.04, 22.04, 20.04    |
+| Debian        | 11, 10, 9              |
 
 ## Other Resources
 
