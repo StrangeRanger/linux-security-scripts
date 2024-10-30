@@ -2,7 +2,7 @@
 #
 # This script locks the root account, preventing users from directly logging in as root.
 #
-# Note:
+# NOTE:
 #   Locking the root account doesn't prevent users from using something like `sudo su`
 #   to gain root access.
 #
