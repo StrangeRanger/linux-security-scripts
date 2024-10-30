@@ -141,7 +141,7 @@ fi
 read -rp "${C_NOTE}We will now harden sshd. Press [Enter] to continue."
 
 ###
-### [ Backup 'sshd_config' ]
+### [ Back up 'sshd_config' ]
 ###
 
 if [[ -f $C_CONFIG_FILE_BAK ]]; then
