@@ -2,7 +2,7 @@
 #
 # Sets up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.0-beta.1
+# Version: v1.0.0-beta.2
 # License: MIT License
 #          Copyright (c) 2024 Hunter T. (StrangeRanger)
 #
@@ -139,10 +139,14 @@ cleanup() {
 }
 
 
-####[ Trap Logic ]######################################################################
+####[ Trapping Logic ]##################################################################
 
 
-trap cleanup EXIT
+trap 'clean_exit 130' SIGINT
+trap 'clean_exit 143' SIGTERM
+trap 'clean_exit 129' SIGHUP
+trap 'clean_exit 131' SIGQUIT
+trap 'clean_exit $?'  EXIT
 
 
 ####[ Main ]############################################################################

@@ -2,11 +2,14 @@
 #
 # This script hardens the ssh server by modifying its configuration file, 'sshd_config'.
 #
-# Note:
+# NOTE:
 #   These configurations align with the recommendations of the security auditing tool
 #   known as Lynis (https://github.com/CISOfy/lynis).
 #
-# Version: v2.0.0
+# TODO:
+#   - Impliment functionality to revert changes if the script fails.
+#
+# Version: v2.0.2
 # License: MIT License
 #          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
 #
@@ -33,7 +36,7 @@ readonly C_ERROR="${C_RED}ERROR:${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
-# Associative array containing the configuration settings for sshd_config.
+# Associative array containing the configuration settings for 'sshd_config'.
 declare -A C_SSHD_CONFIG=(
     ["LogLevel"]="VERBOSE"
     ["LogLevelRegex"]='^#?LogLevel\s+.*$'
@@ -79,22 +82,26 @@ readonly C_SSHD_CONFIG
 
 
 ####
-# Cleanly exit the script.
+# Exit the script and display a message based on the exit code.
 #
 # PARAMETERS:
 #   - $1: exit_code (Required)
-#       - The exit code to exit the script with.
 clean_exit() {
     local exit_code="$1"
 
+    # Unset the EXIT trap to prevent re-entry.
+    trap - EXIT
+
     case "$exit_code" in
-        0)   exit 0 ;;
-        1)   echo "" ;;
-        130) echo -e "\n${C_WARNING}User interrupt detected" ;;
-        *)   echo -e "\n${C_RED}==>${C_NC} Exiting with code: $exit_code" ;;
+        0) ;;
+        1) echo "" ;;
+        129) echo -e "\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
+        130) echo -e "\n${C_WARNING}User interrupt detected (SIGINT)" ;;
+        143) echo -e "\n${C_WARNING}Termination signal detected (SIGTERM)" ;;
+        *) echo -e "\n${C_WARNING}Exiting with code: $exit_code" ;;
     esac
 
-    echo -e "${C_INFO}Exiting..."
+    echo "Exiting..."
     exit "$exit_code"
 }
 
@@ -102,8 +109,10 @@ clean_exit() {
 ####[ Trapping Logic ]##################################################################
 
 
-# Catch some of the most common signals.
-trap 'clean_exit $?' EXIT INT TERM HUP QUIT ERR
+trap 'clean_exit 129' SIGHUP
+trap 'clean_exit 130' SIGINT
+trap 'clean_exit 143' SIGTERM
+trap 'clean_exit $?'  EXIT
 
 
 ####[ Prepping ]########################################################################
@@ -129,7 +138,7 @@ fi
 read -rp "${C_NOTE}We will now harden sshd. Press [Enter] to continue."
 
 ###
-### [ Backup 'sshd_config' ]
+### [ Back up 'sshd_config' ]
 ###
 
 if [[ -f $C_CONFIG_FILE_BAK ]]; then
