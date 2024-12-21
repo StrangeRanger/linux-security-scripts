@@ -9,7 +9,7 @@
 # TODO:
 #   - Impliment functionality to revert changes if the script fails.
 #
-# Version: v2.0.1
+# Version: v2.0.2
 # License: MIT License
 #          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
 #
@@ -82,11 +82,10 @@ readonly C_SSHD_CONFIG
 
 
 ####
-# Cleanly exit the script.
+# Exit the script and display a message based on the exit code.
 #
 # PARAMETERS:
 #   - $1: exit_code (Required)
-#       - The exit code to exit the script with.
 clean_exit() {
     local exit_code="$1"
 
@@ -94,13 +93,12 @@ clean_exit() {
     trap - EXIT
 
     case "$exit_code" in
-        0)   exit 0 ;;
-        1)   echo "" ;;
+        0) ;;
+        1) echo "" ;;
+        129) echo -e "\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
         130) echo -e "\n${C_WARNING}User interrupt detected (SIGINT)" ;;
         143) echo -e "\n${C_WARNING}Termination signal detected (SIGTERM)" ;;
-        129) echo -e "\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
-        131) echo -e "\n${C_WARNING}Quit signal detected (SIGQUIT)" ;;
-        *)   echo -e "\n${C_WARNING}Exiting with code: $exit_code" ;;
+        *) echo -e "\n${C_WARNING}Exiting with code: $exit_code" ;;
     esac
 
     echo "Exiting..."
@@ -111,10 +109,9 @@ clean_exit() {
 ####[ Trapping Logic ]##################################################################
 
 
+trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
-trap 'clean_exit 129' SIGHUP
-trap 'clean_exit 131' SIGQUIT
 trap 'clean_exit $?'  EXIT
 
 
