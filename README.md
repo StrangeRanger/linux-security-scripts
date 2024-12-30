@@ -12,15 +12,18 @@ This repository is a collection of scripts designed to secure/harden Linux based
 
 ### Downloading
 
-All you need to do is download the repository. There are no binaries or anything to install.
+All you need to do is download this repository to your local machine:
 
 `git clone https://github.com/StrangeRanger/linux-security-scripts`
 
 ## Usage
 
-A majority of the scripts will require root privilege to be executed:
+> [!NOTE]
+> Some of the scripts in this repository require root privileges to run. You can run the scripts with the `sudo` command to give them the necessary permissions.
 
-`sudo ./[script name]` OR `sudo bash [script name]`
+You can run the scripts in this repository by using the following command:
+
+`./[script name]` OR `bash [script name]`
 
 ## Tested On
 
