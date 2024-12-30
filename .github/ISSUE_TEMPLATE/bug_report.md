@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Setup (please complete the following information):**
 - Linux Distro/Version: [e.g. Ubuntu 24.04]
-- Script(s) name: [e.g. `sshd.bash`]
+- Script(s) Name: [e.g. `sshd.bash`]
 - Script(s) Version: [e.g. v1.0.0]
 
 **Additional context**
