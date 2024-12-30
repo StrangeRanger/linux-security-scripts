@@ -24,10 +24,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Setup (please complete the following information):**
- - Linux Distro: [e.g. Ubuntu]
- - Distro Version: [e.g. 18.04]
- - Script(s) name: [e.g. sshd.sh]
- - Script(s) Version: [e.g. v1.0.0]
+- Linux Distro/Version: [e.g. Ubuntu 24.04]
+- Script(s) name: [e.g. `sshd.bash`]
+- Script(s) Version: [e.g. v1.0.0]
 
 **Additional context**
 Add any other context about the problem here.
