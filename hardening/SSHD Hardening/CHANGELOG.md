@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## v2.1.0 - 2025-08-09
+
+### Added
+
+- **Session backup system**: Automatic restoration during script interruptions with temporary backup preservation for manual recovery
+- **Cross-platform SSH service restart**: Automatically detects and restarts either `sshd` or `ssh` service based on distribution
+- **Enhanced signal handling**: Proper restoration and cleanup on script interruption (SIGHUP, SIGINT, SIGTERM)
+
+### Changed
+
+- **Backup strategy**: Dual backup system with permanent `.bak` file for user reference and session backup for auto-restoration
+- **Exit handling**: Strategic use of `clean_exit` function only when cleanup or restoration is needed
+- **User messaging**: Enhanced feedback throughout backup, restoration, and cleanup processes
+- **Output colors**: "Already set" messages now use note (cyan) instead of success (green) for better semantic clarity
 
 ## v2.0.2 - 2024-12-20
 
