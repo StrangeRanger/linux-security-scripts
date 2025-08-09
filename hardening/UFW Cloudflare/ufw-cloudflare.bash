@@ -132,6 +132,7 @@ unset fields
 echo "${C_INFO}Retrieving new Cloudflare IP ranges..."
 mapfile -t new_cloudflare_ip_ranges < <(
     curl -s "$C_CLOUDFLARE_IPV4_RANGES_URL"
+    echo ""  # Will prevent the last IPv4 and first IPv6 address from being merged.
     curl -s "$C_CLOUDFLARE_IPV6_RANGES_URL"
 )
 
