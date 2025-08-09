@@ -147,6 +147,16 @@ trap 'clean_exit 131' SIGQUIT
 trap 'clean_exit $?'  EXIT
 
 
+####[ Prepping ]############################################################################
+
+
+## Check if the script was executed with root privilege.
+if (( EUID != 0 )); then
+    echo "${C_ERROR}This script requires root privilege" >&2
+    exit 1
+fi
+
+
 ####[ Main ]################################################################################
 
 
