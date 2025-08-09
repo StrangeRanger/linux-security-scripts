@@ -210,7 +210,7 @@ for key in "${!C_SSHD_CONFIG[@]}"; do
 
     ## Check if the key is already set to the desired value.
     if grep -Eq "^${key} ${C_SSHD_CONFIG[$key]}$" "$C_CONFIG_FILE"; then
-        echo "${C_SUCCESS}${key} already set to '${C_SSHD_CONFIG[$key]}'"
+        echo "${C_NOTE}${key} already set to '${C_SSHD_CONFIG[$key]}'"
     ## Check if the configurations are present in the file.
     elif grep -Eq "${C_SSHD_CONFIG[$regex_key]}" "$C_CONFIG_FILE"; then
         echo "${C_INFO}Setting '${key} ${C_SSHD_CONFIG[$key]}'..."
