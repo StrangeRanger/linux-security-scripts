@@ -1,22 +1,24 @@
 #!/bin/bash
 #
-# This script hardens the ssh server by modifying its configuration file, 'sshd_config'.
+# Harden the ssh server by modifying its configuration file with the recommended settings
+# outlined by the security auditing tool known as Lynis (https://github.com/CISOfy/lynis).
 #
 # NOTE:
-#   These configurations align with the recommendations of the security auditing tool
-#   known as Lynis (https://github.com/CISOfy/lynis).
+#   - Two types of backups are created:
+#       - Permanent backup (.bak): For manual user restoration and reference.
+#       - Session backup (.session_backup): For automatic script restoration during
+#         interruptions.
 #
-# TODO:
-#   - Impliment functionality to revert changes if the script fails.
-#
-# Version: v2.0.2
+# Version: v2.1.0
 # License: MIT License
-#          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 ####[ Global Variables ]################################################################
 
 
+C_TMP_DIR=$(mktemp -d); readonly C_TMP_DIR
+readonly C_SESSION_BACKUP="$C_TMP_DIR/sshd_config.session_backup"
 readonly C_CONFIG_FILE_BAK="/etc/ssh/sshd_config.bak"
 readonly C_CONFIG_FILE="/etc/ssh/sshd_config"
 
@@ -75,12 +77,15 @@ declare -A C_SSHD_CONFIG=(
 )
 readonly C_SSHD_CONFIG
 
+modifications_in_progress=false
+
 
 ####[ Functions ]#######################################################################
 
 
 ####
-# Exit the script and display a message based on the exit code.
+# Cleanly exit the script by removing temporary files, restoring backups if needed, and
+# displaying a message based on the exit code.
 #
 # PARAMETERS:
 #   - $1: exit_code (Required)
@@ -95,7 +100,26 @@ clean_exit() {
         *)   echo -e "\n\n${C_WARNING}Exiting with code: $exit_code" ;;
     esac
 
-    echo "Exiting..."
+    # Check if we need to restore (modifications were in progress).
+    if [[ $modifications_in_progress == true ]] && [[ -f "$C_SESSION_BACKUP" ]]; then
+        echo "${C_WARNING}Script was interrupted during configuration changes"
+        echo "${C_INFO}Restoring original 'sshd_config'..."
+        if cp "$C_SESSION_BACKUP" "$C_CONFIG_FILE"; then
+            echo "${C_SUCCESS}Successfully restored original configuration"
+            echo "${C_INFO}Cleaning up..."
+            [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
+        else
+            echo "${C_ERROR}Failed to restore 'sshd_config'" >&2
+            echo "${C_NOTE}Session backup is available at: $C_SESSION_BACKUP"
+            echo "${C_NOTE}Permanent backup is available at: $C_CONFIG_FILE_BAK"
+            echo "${C_NOTE}Temp directory preserved for manual recovery: $C_TMP_DIR"
+        fi
+    else
+        echo "${C_INFO}Cleaning up..."
+        [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
+    fi
+
+    echo "${C_INFO}Exiting..."
     exit "$exit_code"
 }
 
@@ -137,14 +161,12 @@ read -rp "${C_NOTE}We will now harden sshd. Press [Enter] to continue."
 if [[ -f $C_CONFIG_FILE_BAK ]]; then
     printf "%sA backup of 'sshd_config' already exists. " "$C_NOTE"
     read -rp "Do you want to overwrite it? [y/N] " choice
-    choice="${choice,,}"
 
+    choice="${choice,,}"
     case "$choice" in
         y*)
             echo "${C_INFO}Overwriting backup of 'sshd_config'..."
-            {
-                rm $C_CONFIG_FILE_BAK && cp $C_CONFIG_FILE $C_CONFIG_FILE_BAK
-            } || {
+            cp $C_CONFIG_FILE $C_CONFIG_FILE_BAK || {
                 echo "${C_ERROR}Failed to overwrite backup of 'sshd_config'" >&2
                 exit 1
             }
@@ -157,17 +179,24 @@ if [[ -f $C_CONFIG_FILE_BAK ]]; then
     unset choice
 else
     echo "${C_INFO}Backing up 'sshd_config'..."
-    cp $C_CONFIG_FILE $C_CONFIG_FILE_BAK || {
+    cp "$C_CONFIG_FILE" "$C_CONFIG_FILE_BAK" || {
         echo "${C_ERROR}Failed to back up sshd_config" >&2
-        echo "${C_NOTE}Please create a backup of the original 'sshd_config' before" \
-            "continuing"
+        echo "${C_NOTE}Create a backup of the original 'sshd_config' file before continuing"
         exit 1
     }
 fi
 
+echo "${C_INFO}Creating session backup for safe restoration..."
+cp "$C_CONFIG_FILE" "$C_SESSION_BACKUP" || {
+    echo "${C_ERROR}Failed to create session backup" >&2
+    clean_exit 1
+}
+
 ###
 ### [ Harden 'sshd_config' ]
 ###
+
+modifications_in_progress=true
 
 for key in "${!C_SSHD_CONFIG[@]}"; do
     # Skip processing Regex keys directly.
@@ -197,6 +226,8 @@ done
 ### [ Finalizing ]
 ###
 
+modifications_in_progress=false
+
 echo -e "\n${C_INFO}Restarting SSH service..."
 if systemctl restart sshd 2>/dev/null; then
     echo "${C_SUCCESS}SSH service (sshd) restarted successfully"
@@ -205,7 +236,6 @@ elif systemctl restart ssh 2>/dev/null; then
 else
     echo "${C_ERROR}Failed to restart SSH service (tried both 'sshd' and 'ssh')" >&2
     echo "${C_NOTE}You may need to restart the SSH service manually"
-    exit 1
 fi
 
 echo -e "\n${C_SUCCESS}Finished hardening sshd"
@@ -213,3 +243,5 @@ echo -e "${C_NOTE}It is highly recommended to manually:"
 echo -e "${C_NOTE}  1) Change the default sshd port (22)"
 echo -e "${C_NOTE}  2) Disable PasswordAuthentication in favor of PubkeyAuthentication"
 echo -e "${C_NOTE}  3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'"
+
+clean_exit 0
