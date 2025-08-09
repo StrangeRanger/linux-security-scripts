@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# Sets up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
+# Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.0-beta.2
+# Version: v1.0.0-alpha.2
 # License: MIT License
-#          Copyright (c) 2024 Hunter T. (StrangeRanger)
+#          Copyright (c) 2024-2025 Hunter T. (StrangeRanger)
 #
-########################################################################################
-####[ Global Variables ]################################################################
+############################################################################################
+####[ Global Variables ]####################################################################
 
 
 ## URL for retrieving the current Cloudflare IP ranges.
@@ -20,7 +20,7 @@ new_cloudflare_ip_ranges=()
 stage=0
 
 
-####[ Function ]########################################################################
+####[ Function ]############################################################################
 
 
 ####
@@ -28,9 +28,7 @@ stage=0
 #
 # PARAMETERS:
 #   - $1: ip (Required)
-#       - The IP address to check.
 #   - $2: port (Required)
-#       - The port to check.
 #
 # RETURN:
 #   - 0: The rule exists.
@@ -43,7 +41,7 @@ ufw_rule_exists() {
 }
 
 ####
-# Retrieves the rule number of all Cloudflare IP rules currently set in UFW, then
+# Retrieve the rule number of all Cloudflare IP rules currently set in UFW, then
 # stores them in an array.
 #
 # PARAMETERS:
@@ -139,7 +137,7 @@ cleanup() {
 }
 
 
-####[ Trapping Logic ]##################################################################
+####[ Trapping Logic ]######################################################################
 
 
 trap 'clean_exit 130' SIGINT
@@ -149,7 +147,7 @@ trap 'clean_exit 131' SIGQUIT
 trap 'clean_exit $?'  EXIT
 
 
-####[ Main ]############################################################################
+####[ Main ]################################################################################
 
 
 ###
@@ -209,4 +207,3 @@ ufw delete allow from any to any port 80,443 proto tcp
 sleep 1  # Wait for the rule to take effect.
 
 echo "Done."
-
