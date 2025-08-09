@@ -41,44 +41,6 @@ ufw_rule_exists() {
 }
 
 ####
-# Retrieve the rule number of all Cloudflare IP rules currently set in UFW, then
-# stores them in an array.
-#
-# PARAMETERS:
-#   - $1: string_to_grep (Required)
-#       - The string to grep for in the UFW status output.
-#       - Acceptable values:
-#           - 0: "Cloudflare IP"
-#           - 1: "Temporary rule"
-get_set_cloudflare_rule_numbers() {
-    if (( $1 == 0 )); then
-        local string_to_grep="Cloudflare IP"
-    elif (( $1 == 1 )); then
-        local string_to_grep="Temporary rule"
-    else
-        echo "Invalid argument: $1"
-        exit 1
-    fi
-
-    mapfile -t current_cloudflare_rule_numbers < <(
-        ufw status numbered \
-            | grep "$string_to_grep" \
-            | awk -F'[][]' '{print $2}' \
-            | sort -rn
-    )
-}
-
-####
-# Retrieves the IP addresses of all Cloudflare IP rules currently set in UFW, then
-# stores them in an array.
-get_set_cloudflare_ip_ranges() {
-    while IFS= read -r line; do
-        ip=$(echo "$line" | awk '{print $3}')  # Extract the IP address.
-        current_cloudflare_ip_ranges+=("$ip")
-    done < <(sudo ufw status | grep "Cloudflare IP")
-}
-
-####
 # Set the new Cloudflare IP ranges in UFW, retrieved from the Cloudflare website.
 set_new_cloudflare_ip_ranges() {
     for ip in "${new_cloudflare_ip_ranges[@]}"; do
@@ -98,8 +60,40 @@ restore_current_cloudflare_ip_ranges() {
 
 ####
 # Deletes all Cloudflare IP rules currently set in UFW.
+#
+# PARAMETERS:
+#   - $1: grep_string (Optional, Default: 0)
+#       - The string to look for in the UFW status output. Using an integer for the value
+#         helps eliminate accidental misspellings when passing arguments.
+#       - Acceptable values:
+#           - 0: "Cloudflare IP"
+#           - 1: "Temporary rule"
 delete_set_cloudflare_rules() {
-    get_set_cloudflare_rule_numbers "0"
+    local grep_string="${1:-0}"
+    local current_cloudflare_rule_numbers
+
+    if (( $1 == 0 )); then
+        grep_string="Cloudflare IP"
+    elif (( $1 == 1 )); then
+        grep_string="Temporary rule"
+    else
+        echo "INTERNAL ERROR: Invalid argument: $1"
+        exit 2
+    fi
+
+    mapfile -t current_cloudflare_rule_numbers < <(
+        ufw status numbered \
+            | grep -E "^\[ *[0-9]+\].*$grep_string" \
+            | while IFS= read -r line; do
+                ## Extract number between brackets (handles both [1] and [ 1] formats).
+                temp="${line#*[}"
+                temp="${temp%%]*}"
+                ## Remove any leading/trailing whitespace.
+                temp="${temp#"${temp%%[![:space:]]*}"}"
+                temp="${temp%"${temp##*[![:space:]]}"}"
+                echo "$temp"
+              done
+    )
 
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
         # TODO: Add configuration option to confirm deletion.
@@ -166,15 +160,21 @@ fi
 
 stage=1
 
-get_set_cloudflare_ip_ranges
-mapfile -t new_cloudflare_ip_ranges < <(curl -s "$C_CLOUDFLARE_IPV4_RANGES_URL")
-mapfile -t new_cloudflare_ipv6_ranges < <(curl -s "$C_CLOUDFLARE_IPV6_RANGES_URL")
+echo "Retrieving current Cloudflare IP rules from UFW..."
+while IFS= read -r line; do
+    read -ra fields <<< "$line"
+    current_cloudflare_ip_ranges+=("${fields[2]}")
+done < <(sudo ufw status | grep "Cloudflare IP")
+unset fields
 
-new_cloudflare_ip_ranges+=("${new_cloudflare_ipv6_ranges[@]}")
-unset new_cloudflare_ipv6_ranges
+echo "Retrieving new Cloudflare IP ranges..."
+mapfile -t new_cloudflare_ip_ranges < <(
+    curl -s "$C_CLOUDFLARE_IPV4_RANGES_URL"
+    curl -s "$C_CLOUDFLARE_IPV6_RANGES_URL"
+)
 
 ###
-### [ Opening ports 80 and 443 from any IP address ]
+### Temporary rule to prevent traffic disruption.
 ###
 
 stage=2
@@ -184,7 +184,7 @@ ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"
 sleep 1  # Wait for the rule to take effect.
 
 ###
-### [ Removing the existing Cloudflare IP ranges ]
+### Remove the existing Cloudflare IP ranges to allow new ones.
 ###
 
 stage=3
@@ -197,7 +197,7 @@ fi
 sleep 1  # Wait for the rule to take effect.
 
 ###
-### [ Adding the new Cloudflare IP ranges ]
+### Add the new Cloudflare IP ranges.
 ###
 
 stage=4
