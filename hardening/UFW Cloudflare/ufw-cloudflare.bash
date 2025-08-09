@@ -168,7 +168,8 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
                 temp="${temp#"${temp%%[![:space:]]*}"}"
                 temp="${temp%"${temp##*[![:space:]]}"}"
                 echo "$temp"
-              done
+              done \
+            | sort -rn
     )
 
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
