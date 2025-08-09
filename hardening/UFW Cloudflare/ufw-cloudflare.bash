@@ -14,22 +14,24 @@ C_TMP_DIR=$(mktemp -d)
 C_UFW_BACKUP_ARCHIVE="$C_TMP_DIR/ufw-backup-$(date +%F).tar.gz"
 readonly C_TMP_DIR C_UFW_BACKUP_ARCHIVE
 readonly C_CLOUDFLARE_UFW_COMMENT="Cloudflare IP"
+readonly C_SLEEP_TIME=1
 
-## URL for retrieving the current Cloudflare IP ranges.
 readonly C_CLOUDFLARE_IPV4_RANGES_URL="https://www.cloudflare.com/ips-v4/"
 readonly C_CLOUDFLARE_IPV6_RANGES_URL="https://www.cloudflare.com/ips-v6/"
 
 C_YELLOW="$(printf '\033[1;33m')"
 C_GREEN="$(printf '\033[0;32m')"
 C_BLUE="$(printf '\033[0;34m')"
+C_CYAN="$(printf '\033[0;36m')"
 C_RED="$(printf '\033[1;31m')"
 C_NC="$(printf '\033[0m')"
-readonly C_YELLOW C_GREEN C_BLUE C_RED C_NC
+readonly C_YELLOW C_GREEN C_BLUE C_CYAN C_RED C_NC
 
 readonly C_SUCCESS="${C_GREEN}==>${C_NC} "
 readonly C_WARNING="${C_YELLOW}==>${C_NC} "
 readonly C_ERROR="${C_RED}ERROR:${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
+readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
 current_cloudflare_rule_numbers=()
 current_cloudflare_ip_ranges=()
@@ -39,23 +41,6 @@ stage=0
 
 ####[ Function ]############################################################################
 
-
-####
-# Check if a UFW rule exists for a specific IP address and port.
-#
-# PARAMETERS:
-#   - $1: ip (Required)
-#   - $2: port (Required)
-#
-# RETURN:
-#   - 0: The rule exists.
-#   - ?: The rule does not exist.
-ufw_rule_exists() {
-    local ip="$1"
-    local port="$2"
-
-    ufw status | grep -qE "^${port}.*ALLOW.*${ip}.*$"
-}
 
 ####
 # Cleanly exit the script by removing temporary files, restoring backups if needed, and
@@ -140,20 +125,24 @@ echo "${C_INFO}Creating UFW backup archive at: $C_UFW_BACKUP_ARCHIVE"
 tar -C /etc -cf "$C_UFW_BACKUP_ARCHIVE" ufw
 
 ###
-### Temporary rule to prevent traffic disruption.
+### Add temporary rule to prevent traffic disruption.
 ###
 
 stage=2
 
 echo "${C_INFO}Temporarily opening ports 80 and 443 from any IP address..."
-ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"
+if ! ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
+    echo "${C_ERROR}Failed to add temporary rule" >&2
+    clean_exit 1
+fi
 
 ###
 ### Remove the existing Cloudflare IP ranges to allow new ones.
 ###
 
 stage=3
-sleep 1
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
 
 if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     echo "${C_INFO}Removing the existing Cloudflare IP ranges..."
@@ -174,7 +163,6 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     )
 
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
-        # TODO: Add configuration option to confirm deletion.
         yes | ufw delete "$rule_num"
     done
 fi
@@ -186,12 +174,15 @@ unset current_cloudflare_rule_numbers
 ###
 
 stage=4
-sleep 1
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Adding the new Cloudflare IPv4 and IPv6 ranges..."
 for ip in "${new_cloudflare_ip_ranges[@]}"; do
-    ufw_rule_exists "$ip" "80,443" \
-        || ufw allow from "$ip" to any port 80,443 proto tcp comment "Cloudflare IP"
+    echo "${C_INFO}  Adding rule for '$ip'..."
+    if ! ufw allow from "$ip" to any port 80,443 proto tcp comment "$C_CLOUDFLARE_UFW_COMMENT" >/dev/null; then
+        echo "${C_ERROR}Failed to add rule for '$ip'" >&2
+    fi
 done
 
 ###
@@ -199,11 +190,16 @@ done
 ###
 
 stage=5
-sleep 1
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Removing temporary rules..."
-ufw delete allow from any to any port 80,443 proto tcp
+if ! ufw delete allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
+    echo "${C_ERROR}Failed to remove temporary rule" >&2
+    echo "${C_NOTE}Please check your UFW configuration and remove it manually"
+fi
 
-sleep 1
+sleep "$C_SLEEP_TIME"
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
 echo "${C_SUCCESS}Finished setting up UFW with Cloudflare IP ranges"
 clean_exit 0
