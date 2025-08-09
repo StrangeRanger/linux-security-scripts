@@ -20,18 +20,16 @@
 readonly C_CONFIG_FILE_BAK="/etc/ssh/sshd_config.bak"
 readonly C_CONFIG_FILE="/etc/ssh/sshd_config"
 
-## Used to colorize output.
 C_YELLOW="$(printf '\033[1;33m')"
 C_GREEN="$(printf '\033[0;32m')"
 C_BLUE="$(printf '\033[0;34m')"
 C_CYAN="$(printf '\033[0;36m')"
 C_RED="$(printf '\033[1;31m')"
 C_NC="$(printf '\033[0m')"
-readonly C_GREEN C_CYAN C_RED C_NC
+readonly C_YELLOW C_GREEN C_BLUE C_CYAN C_RED C_NC
 
-## Short-hand colorized messages.
-readonly C_SUCCESS="${C_GREEN}==>${C_NC} "
 readonly C_WARNING="${C_YELLOW}==>${C_NC} "
+readonly C_SUCCESS="${C_GREEN}==>${C_NC} "
 readonly C_ERROR="${C_RED}ERROR:${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
@@ -89,16 +87,12 @@ readonly C_SSHD_CONFIG
 clean_exit() {
     local exit_code="$1"
 
-    # Unset the EXIT trap to prevent re-entry.
-    trap - EXIT
-
     case "$exit_code" in
-        0) ;;
-        1) echo "" ;;
-        129) echo -e "\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
-        130) echo -e "\n${C_WARNING}User interrupt detected (SIGINT)" ;;
-        143) echo -e "\n${C_WARNING}Termination signal detected (SIGTERM)" ;;
-        *) echo -e "\n${C_WARNING}Exiting with code: $exit_code" ;;
+        0|1) echo "" ;;
+        129) echo -e "\n\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
+        130) echo -e "\n\n${C_WARNING}User interrupt detected (SIGINT)" ;;
+        143) echo -e "\n\n${C_WARNING}Termination signal detected (SIGTERM)" ;;
+        *)   echo -e "\n\n${C_WARNING}Exiting with code: $exit_code" ;;
     esac
 
     echo "Exiting..."
@@ -112,14 +106,13 @@ clean_exit() {
 trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
-trap 'clean_exit $?'  EXIT
 
 
 ####[ Prepping ]########################################################################
 
 
 ## Check if the script was executed with root privilege.
-if [[ $EUID != 0 ]]; then
+if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
     exit 1
 fi
@@ -204,15 +197,19 @@ done
 ### [ Finalizing ]
 ###
 
-echo -e "\n${C_INFO}Restarting sshd..."
-systemctl restart sshd || {
-    echo "${C_ERROR}Failed to restart sshd" >&2
+echo -e "\n${C_INFO}Restarting SSH service..."
+if systemctl restart sshd 2>/dev/null; then
+    echo "${C_SUCCESS}SSH service (sshd) restarted successfully"
+elif systemctl restart ssh 2>/dev/null; then
+    echo "${C_SUCCESS}SSH service (ssh) restarted successfully"
+else
+    echo "${C_ERROR}Failed to restart SSH service (tried both 'sshd' and 'ssh')" >&2
+    echo "${C_NOTE}You may need to restart the SSH service manually"
     exit 1
-}
+fi
 
 echo -e "\n${C_SUCCESS}Finished hardening sshd"
 echo -e "${C_NOTE}It is highly recommended to manually:"
 echo -e "${C_NOTE}  1) Change the default sshd port (22)"
 echo -e "${C_NOTE}  2) Disable PasswordAuthentication in favor of PubkeyAuthentication"
 echo -e "${C_NOTE}  3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'"
-
