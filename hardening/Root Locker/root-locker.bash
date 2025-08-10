@@ -6,9 +6,9 @@
 #   Locking the root account doesn't prevent users from using something like `sudo su`
 #   to gain root access.
 #
-# Version: v1.0.9
+# Version: v1.0.10
 # License: MIT License
-#          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 
@@ -24,8 +24,7 @@ C_INFO="${C_BLUE}==>${C_NC} "
 C_NOTE="${C_CYAN}==>${C_NC} "
 
 
-## Check if this script was executed with root privilege.
-if [[ $EUID != 0 ]]; then
+if (( EUID != 0 )); then
     echo "${C_ERROR}Please run this script as or with root privilege" >&2
     exit 1
 fi
