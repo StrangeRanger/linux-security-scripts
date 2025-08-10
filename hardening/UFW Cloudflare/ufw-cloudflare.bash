@@ -96,7 +96,6 @@ trap 'clean_exit 143' SIGTERM
 ####[ Prepping ]############################################################################
 
 
-## Check if the script was executed with root privilege.
 if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
     exit 1
@@ -156,7 +155,7 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
         ufw status numbered \
             | grep -E "^\[ *[0-9]+\].*$C_CLOUDFLARE_UFW_COMMENT" \
             | while IFS= read -r line; do
-                ## Extract number between brackets (handles both [1] and [ 1] formats).
+                ## Extract the number between brackets (handles both [1] and [ 1] formats).
                 temp="${line#*[}"
                 temp="${temp%%]*}"
                 ## Remove any leading/trailing whitespace.
