@@ -75,6 +75,11 @@ clean_exit() {
             ;;
     esac
 
+    if [[ -d "$C_TMP_DIR" ]]; then
+        echo "${C_INFO}Cleaning up..."
+        rm -rf "$C_TMP_DIR"
+    fi
+
     echo "${C_INFO}Exiting..."
     exit "$exit_code"
 }
