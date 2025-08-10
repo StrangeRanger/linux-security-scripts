@@ -6,7 +6,7 @@
 #   Locking the root account doesn't prevent users from using something like `sudo su`
 #   to gain root access.
 #
-# Version: v1.0.8
+# Version: v1.0.9
 # License: MIT License
 #          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
 #
@@ -27,7 +27,6 @@ C_NOTE="${C_CYAN}==>${C_NC} "
 ## Check if this script was executed with root privilege.
 if [[ $EUID != 0 ]]; then
     echo "${C_ERROR}Please run this script as or with root privilege" >&2
-    echo -e "\n${C_INFO}Exiting..."
     exit 1
 fi
 
@@ -37,7 +36,6 @@ read -rp "${C_NOTE}We will now disable the root account. Press [Enter] to contin
 echo "${C_INFO}Disabling root account..."
 usermod -L root || {
     echo -e "${C_ERROR}Failed to lock the root account" >&2
-    echo -e "\n${C_INFO}Exiting..."
     exit 1
 }
 
