@@ -5,9 +5,9 @@
 # it. Unless an error is encountered, Lynis will always be downloaded to the current
 # user's root directory (`/home/USERNAME/`).
 #
-# Version: v1.0.8
+# Version: v1.0.9
 # License: MIT License
-#          Copyright (c) 2020-2024 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 
@@ -48,5 +48,5 @@ git clone https://github.com/CISOfy/lynis || {
 }
 
 echo -e "\n${C_SUCCESS}Lynis has been downloaded to your system"
-echo -e "${C_NOTE}To perform a system scan with lynis, execute the following command" \
+echo "${C_NOTE}To perform a system scan with lynis, execute the following command" \
     "in the lynis root directory: sudo ./lynis audit system"
