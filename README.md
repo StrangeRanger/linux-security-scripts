@@ -108,7 +108,7 @@ After running the hardening scripts:
 4. **Backup configurations**: Keep copies of any modified configuration files.
 
 > [!WARNING]
-> The SSHD hardening script modifies SSH configuration. Ensure you have alternative access to your system before applying changes in production environments.
+> The SSHD hardening script modifies SSH configurations. Ensure you have alternative access to your system before applying changes in production environments.
 
 ## Tested On
 
