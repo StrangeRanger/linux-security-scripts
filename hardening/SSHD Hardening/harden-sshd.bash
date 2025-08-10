@@ -100,12 +100,12 @@ clean_exit() {
         *)   echo -e "\n\n${C_WARNING}Exiting with code: $exit_code" ;;
     esac
 
-    # Check if we need to restore (modifications were in progress).
+    # Check if we need to restore the original configurations.
     if [[ $modifications_in_progress == true ]] && [[ -f "$C_SESSION_BACKUP" ]]; then
         echo "${C_WARNING}Script was interrupted during configuration changes"
         echo "${C_INFO}Restoring original 'sshd_config'..."
         if cp "$C_SESSION_BACKUP" "$C_CONFIG_FILE"; then
-            echo "${C_SUCCESS}Successfully restored original configuration"
+            echo "${C_SUCCESS}Successfully restored original configurations"
             echo "${C_INFO}Cleaning up..."
             [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
         else
@@ -238,10 +238,11 @@ else
     echo "${C_NOTE}You may need to restart the SSH service manually"
 fi
 
-echo -e "\n${C_SUCCESS}Finished hardening sshd"
-echo -e "${C_NOTE}It is highly recommended to manually:"
-echo -e "${C_NOTE}  1) Change the default sshd port (22)"
-echo -e "${C_NOTE}  2) Disable PasswordAuthentication in favor of PubkeyAuthentication"
-echo -e "${C_NOTE}  3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'"
+echo ""
+echo "${C_SUCCESS}Finished hardening sshd"
+echo "${C_NOTE}It is highly recommended to manually:"
+echo "${C_NOTE}  1) Change the default sshd port (22)"
+echo "${C_NOTE}  2) Disable PasswordAuthentication in favor of PubkeyAuthentication"
+echo "${C_NOTE}  3) Add 'AllowUsers [your username]' to the bottom of 'sshd_config'"
 
 clean_exit 0
