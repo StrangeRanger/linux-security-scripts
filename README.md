@@ -19,8 +19,6 @@ This repository is a collection of scripts designed to secure/harden Linux-based
     - [Individual Script Usage](#individual-script-usage)
   - [Post-Installation](#post-installation)
   - [Tested On](#tested-on)
-  - [Troubleshooting](#troubleshooting)
-    - [Common Issues](#common-issues)
   - [Other Resources](#other-resources)
     - [Security Auditing Tools](#security-auditing-tools)
     - [Additional Hardening Resources](#additional-hardening-resources)
@@ -38,15 +36,20 @@ Below is a list of tools included in this repository.
 |-----------|-------------|----------|--------------|-------|
 | **[Lynis Installer](auditing/Lynis%20Installer/lynis-installer.bash)** | Download (clone) Lynis, a security auditing tool for Unix-like systems. | Auditing | Git, Internet connection | No root required |
 | **[Root Locker](hardening/Root%20Locker/root-locker.bash)** | Locks the root account to prevent direct logins. | Hardening | Root privileges | Preserves sudo access |
-| **[SSHD Hardening](hardening/SSHD%20Hardening/harden-sshd.bash)** | Harden OpenSSH server (sshd) per Lynis recommendations. | Hardening | Root privileges | Creates backups; restarts sshd |
-| **[UFW Cloudflare](hardening/UFW%20Cloudflare/ufw-cloudflare.bash)** | Configure UFW to only allow HTTP/HTTPS from Cloudflare IP ranges. | Hardening | Root privileges, UFW, Internet connection | **Beta status** |
+| **[SSHD Hardening](hardening/SSHD%20Hardening/harden-sshd.bash)** | Harden OpenSSH server (sshd) per Lynis recommendations. | Hardening | Root privileges | Creates backups |
+| **[UFW Cloudflare](hardening/UFW%20Cloudflare/ufw-cloudflare.bash)** | Configure UFW to only allow HTTP/HTTPS from Cloudflare IP ranges. | Hardening | Root privileges, UFW, Internet connection | Creates backups |
+
+> [!NOTE]
+> All scripts include version information in their headers. Check individual CHANGELOG.md files in each tool's directory for version history and updates.
+
 ## Getting Started
 
 ### Prerequisites
 
+The following requirements extend to every tool in this repository:
+
 - **Bash**: Version 4.0 or higher
 - **Operating System**: Linux-based distribution
-- **File Permissions**: Ability to make scripts executable (`chmod +x`)
 
 > [!NOTE]
 > Individual scripts may have additional requirements listed in the table above.
@@ -59,9 +62,6 @@ All you need to do is download this repository to your local machine:
 git clone https://github.com/StrangeRanger/linux-security-scripts
 cd linux-security-scripts
 ```
-
-> [!NOTE]
-> If you're downloading individual scripts, you may need to make them executable with `chmod +x <script-name>`.
 
 ## Usage
 
@@ -79,7 +79,10 @@ For users who want to get started immediately:
    cd ~/lynis && sudo ./lynis audit system
    ```
 
-3. **Apply hardening**: Based on the audit results, run the appropriate hardening scripts.
+3. **Apply hardening**: Based on the audit results, run the appropriate hardening scripts with root privileges.
+
+> [!CAUTION]
+> **Production Environment Warning**: Always test scripts in a non-production environment first. Some scripts modify critical system configurations and may affect system accessibility.
 
 ### Individual Script Usage
 
@@ -95,9 +98,6 @@ You can run any script individually using one of the following methods:
 bash [script-name]
 ```
 
-> [!IMPORTANT]
-> Scripts that require root privileges will prompt you or exit with an error if not run with appropriate permissions.
-
 ## Post-Installation
 
 After running the hardening scripts:
@@ -112,28 +112,16 @@ After running the hardening scripts:
 
 ## Tested On
 
-All of the scripts should work on most, if not all Linux Distributions. With that said, below is a list of Linux Distributions that the scripts have been officially tested and are confirmed to work on.
+All of the scripts should work on most, if not all, Linux distributions with Bash v4.0+ installed. With that said, below is a list of Linux distributions that the scripts have been officially tested and are confirmed to work on.
 
 | Distributions | Distro Versions        |
 | ------------- | ---------------------- |
 | Ubuntu        | 24.04, 22.04, 20.04    |
 | Debian        | 11, 10, 9              |
 
-> [!NOTE]
-> Scripts should work on most Linux distributions with Bash 4.0+. The above list represents officially tested distributions.
-
-## Troubleshooting
-
-### Common Issues
-
-- **Permission denied**: Ensure you're running scripts with appropriate permissions (sudo for hardening scripts).
-- **Git not found**: Install git with your package manager (`apt install git`, `yum install git`, etc.).
-- **SSH connection lost**: The SSHD hardening script creates a backup at `/etc/ssh/sshd_config.bak` - you can restore it if needed.
-- **UFW conflicts**: If you have existing UFW rules, review them before running the Cloudflare script.
-
 ## Other Resources
 
-While this repository has scripts that can help secure Linux, it's not nearly enough to secure the system as much as it needs to be. Below is a list of other resources that you can/should use to help make your system as secure as possible.
+Below is a list of additional resources that you can/should use to help make your system as secure as possible.
 
 ### Security Auditing Tools
 
