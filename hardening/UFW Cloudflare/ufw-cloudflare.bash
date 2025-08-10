@@ -2,7 +2,7 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.0-alpha.2
+# Version: v1.0.0
 # License: MIT License
 #          Copyright (c) 2024-2025 Hunter T. (StrangeRanger)
 #
@@ -180,7 +180,9 @@ sleep "$C_SLEEP_TIME"
 echo "${C_INFO}Adding the new Cloudflare IPv4 and IPv6 ranges..."
 for ip in "${new_cloudflare_ip_ranges[@]}"; do
     echo "${C_INFO}  Adding rule for '$ip'..."
-    if ! ufw allow from "$ip" to any port 80,443 proto tcp comment "$C_CLOUDFLARE_UFW_COMMENT" >/dev/null; then
+    if ! ufw allow from "$ip" to any port 80,443 proto tcp comment \
+        "$C_CLOUDFLARE_UFW_COMMENT" >/dev/null
+    then
         echo "${C_ERROR}Failed to add rule for '$ip'" >&2
     fi
 done
