@@ -92,11 +92,7 @@ You can run any script individually using one of the following methods:
 
 ```bash
 ./[script-name]
-```
-
-**or**
-
-```bash
+# OR
 bash [script-name]
 ```
 
