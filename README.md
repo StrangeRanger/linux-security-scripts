@@ -76,7 +76,9 @@ For users who want to get started immediately:
 
 2. **Run a security audit**: Use Lynis to identify security issues.
    ```bash
-   cd ~/lynis && sudo ./lynis audit system
+   cd ~/lynis
+   clear
+   sudo ./lynis audit system
    ```
 
 3. **Apply hardening**: Based on the audit results, run the appropriate hardening scripts with root privileges.
