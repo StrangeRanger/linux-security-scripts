@@ -74,6 +74,8 @@ declare -A C_SSHD_CONFIG=(
     ["ClientAliveIntervalRegex"]='^#?ClientAliveInterval\s+.*$'
     ["ClientAliveCountMax"]="2"
     ["ClientAliveCountMaxRegex"]='^#?ClientAliveCountMax\s+.*$'
+    ["MaxStartups"]="10:30:60"
+    ["MaxStartupsRegex"]='^#?MaxStartups\s+.*$'
 )
 readonly C_SSHD_CONFIG
 
