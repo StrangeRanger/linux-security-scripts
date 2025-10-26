@@ -9,7 +9,7 @@
 #       - Session backup (.session_backup): For automatic script restoration during
 #         interruptions.
 #
-# Version: v2.1.0
+# Version: v2.2.0
 # License: MIT License
 #          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
 #
