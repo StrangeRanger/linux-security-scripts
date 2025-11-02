@@ -9,7 +9,7 @@
 #       - Session backup (.session_backup): For automatic script restoration during
 #         interruptions.
 #
-# Version: v2.1.0
+# Version: v2.2.0
 # License: MIT License
 #          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
 #
@@ -74,6 +74,8 @@ declare -A C_SSHD_CONFIG=(
     ["ClientAliveIntervalRegex"]='^#?ClientAliveInterval\s+.*$'
     ["ClientAliveCountMax"]="2"
     ["ClientAliveCountMaxRegex"]='^#?ClientAliveCountMax\s+.*$'
+    ["MaxStartups"]="10:30:60"
+    ["MaxStartupsRegex"]='^#?MaxStartups\s+.*$'
 )
 readonly C_SSHD_CONFIG
 
