@@ -5,13 +5,11 @@
 
 Installs and configures ModSecurity with the OWASP Core Rule Set for Nginx.
 
-This script builds software from source, installs packages, writes Nginx configuration, enables ModSecurity, tests the Nginx configuration, and restarts Nginx.
-
 ## Requirements
 
 - Bash 4.0 or newer
 - Root privileges
-- Nginx installed and available in `PATH`
+- Nginx 1.24.0 or newer, installed and available in `PATH`
 - A Debian/Ubuntu-style system with `apt-get` and `dpkg`
 - Internet access
 
@@ -79,7 +77,6 @@ The script also creates or reuses build directories in the current working direc
 
 ## Safety Notes
 
-- Run this in a test environment before using it on a production web server.
 - Review local Nginx packaging conventions before running it on systems with custom Nginx builds.
 - The OWASP Core Rule Set can block legitimate traffic until tuned for the application.
 - Existing local changes in reused `ModSecurity`, `ModSecurity-nginx`, or CRS clone directories may affect the run.
