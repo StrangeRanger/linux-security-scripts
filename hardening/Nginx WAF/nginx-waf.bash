@@ -40,7 +40,6 @@ readonly C_REQUIRED_PKGS=(
     libcurl4-openssl-dev
     libgd-dev
     libgeoip-dev
-    liblmdb-dev
     libpcre2-dev
     libperl-dev
     libssl-dev
