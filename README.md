@@ -4,7 +4,9 @@
 [![Style Guide](https://img.shields.io/badge/code%20style-Style%20Guide-blueviolet)](https://bsg.hthompson.dev/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/598c2083cd6f432a910a315fd10aaa66)](https://www.codacy.com/gh/StrangeRanger/linux-security-scripts/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StrangeRanger/linux-security-scripts&amp;utm_campaign=Badge_Grade)
 
-This repository is a collection of scripts designed to secure/harden Linux-based distributions.
+This repository is a collection of independent scripts designed to audit and harden Linux-based distributions.
+
+Each script is intended to be used on its own. There is no required install order, shared runtime, or single hardening profile for the whole repository. Review the README for the specific script you plan to run before applying it to a system.
 
 <details>
 <summary><strong>Table of Contents</strong></summary>
@@ -15,10 +17,10 @@ This repository is a collection of scripts designed to secure/harden Linux-based
     - [Prerequisites](#prerequisites)
     - [Download and Setup](#download-and-setup)
   - [Usage](#usage)
-    - [Quick Start](#quick-start)
+    - [Optional Audit Workflow](#optional-audit-workflow)
     - [Individual Script Usage](#individual-script-usage)
-  - [Post-Installation](#post-installation)
-  - [Tested On](#tested-on)
+  - [After Running a Script](#after-running-a-script)
+  - [Compatibility](#compatibility)
   - [Other Resources](#other-resources)
     - [Security Auditing Tools](#security-auditing-tools)
     - [Additional Hardening Resources](#additional-hardening-resources)
@@ -30,30 +32,31 @@ This repository is a collection of scripts designed to secure/harden Linux-based
 
 ## Tools and Scripts
 
-Below is a list of tools included in this repository.
+Below is a list of scripts included in this repository. Each script has its own README with requirements, usage, compatibility notes, safety warnings, and version history.
 
-| Tool Name | Description | Category | Requirements | Notes |
-|-----------|-------------|----------|--------------|-------|
-| **[Lynis Installer](auditing/Lynis%20Installer/lynis-installer.bash)** | Download (clone) Lynis, a security auditing tool for Unix-like systems. | Auditing | Git, Internet connection | No root required |
-| **[Root Locker](hardening/Root%20Locker/root-locker.bash)** | Locks the root account to prevent direct logins. | Hardening | Root privileges | Preserves sudo access |
-| **[SSHD Hardening](hardening/SSHD%20Hardening/harden-sshd.bash)** | Harden OpenSSH server (sshd) per Lynis recommendations. | Hardening | Root privileges | Creates backups |
-| **[UFW Cloudflare](hardening/UFW%20Cloudflare/ufw-cloudflare.bash)** | Configure UFW to only allow HTTP/HTTPS from Cloudflare IP ranges. | Hardening | Root privileges, UFW, Internet connection | Creates backups |
-| **[Nginx WAF](hardening/Nginx%20WAF/nginx-waf.bash)** | Install and configure ModSecurity with OWASP Core Rule Set for Nginx. | Hardening | Root privileges, Nginx, Internet connection | **IMPORTANT:** Currently in **Beta**. Confirmed to work on Nginx v1.24.0 and later. |
+| Script | Purpose | Category | Details |
+|--------|---------|----------|---------|
+| **Lynis Installer** | Download Lynis, a security auditing tool for Unix-like systems. | Auditing | [README](auditing/Lynis%20Installer/README.md) / [Script](auditing/Lynis%20Installer/lynis-installer.bash) |
+| **Root Locker** | Lock the root account to prevent direct root logins. | Hardening | [README](hardening/Root%20Locker/README.md) / [Script](hardening/Root%20Locker/root-locker.bash) |
+| **SSHD Hardening** | Harden OpenSSH server configuration based on Lynis recommendations. | Hardening | [README](hardening/SSHD%20Hardening/README.md) / [Script](hardening/SSHD%20Hardening/harden-sshd.bash) |
+| **UFW Cloudflare** | Configure UFW to allow HTTP/HTTPS traffic only from Cloudflare IP ranges. | Hardening | [README](hardening/UFW%20Cloudflare/README.md) / [Script](hardening/UFW%20Cloudflare/ufw-cloudflare.bash) |
+| **Nginx WAF** | Install and configure ModSecurity with the OWASP Core Rule Set for Nginx. | Hardening | [README](hardening/Nginx%20WAF/README.md) / [Script](hardening/Nginx%20WAF/nginx-waf.bash) |
+| **Disable USB** | Experimental script intended to disable the `usb-storage` kernel module. | Hardening | [README](hardening/Disable%20USB/README.md) / [Script](hardening/Disable%20USB/disable-usb.bash) |
 
 > [!NOTE]
-> All scripts include version information in their headers. Check individual CHANGELOG.md files in each tool's directory for version history and updates.
+> All scripts include version information in their headers. Check the README and CHANGELOG.md in each script directory for script-specific details.
 
 ## Getting Started
 
 ### Prerequisites
 
-The following requirements extend to every tool in this repository:
+The following requirements apply broadly to the repository:
 
 - **Bash**: Version 4.0 or higher
 - **Operating System**: Linux-based distribution
 
 > [!NOTE]
-> Individual scripts may have additional requirements listed in the table above.
+> Individual scripts may require root privileges, network access, packages, or services such as OpenSSH, UFW, or Nginx. Check the script's README before running it.
 
 ### Download and Setup
 
@@ -66,11 +69,11 @@ cd linux-security-scripts
 
 ## Usage
 
-### Quick Start
+### Optional Audit Workflow
 
-For users who want to get started immediately:
+An audit-first workflow can help you decide which hardening changes are appropriate for a system:
 
-1. **Audit your system first**: Run the Lynis installer to download the auditing tool.
+1. **Install Lynis**: Run the Lynis installer to download the auditing tool.
    ```bash
    ./auditing/Lynis\ Installer/lynis-installer.bash
    ```
@@ -82,41 +85,46 @@ For users who want to get started immediately:
    sudo ./lynis audit system
    ```
 
-3. **Apply hardening**: Based on the audit results, run the appropriate hardening scripts with root privileges.
+3. **Apply hardening selectively**: Based on the audit results, run only the hardening scripts that match your needs.
+
+This workflow is optional. The hardening scripts do not depend on the Lynis installer.
 
 > [!CAUTION]
 > **Production Environment Warning**: Always test scripts in a non-production environment first. Some scripts modify critical system configurations and may affect system accessibility.
 
 ### Individual Script Usage
 
-You can run any script individually using one of the following methods:
+Run only the script you need. Most hardening scripts require root privileges:
 
 ```bash
-./[script-name]
-# OR
-bash [script-name]
+sudo ./path/to/script.bash
 ```
 
-## Post-Installation
+Scripts can also be run through Bash directly:
 
-After running the hardening scripts:
+```bash
+bash ./path/to/script.bash
+```
 
-1. **Verify SSH access**: Before logging out, test SSH connectivity in a new terminal session.
-2. **Review firewall rules**: Check UFW status with `sudo ufw status verbose` if you used the UFW Cloudflare script.
-3. **Run Lynis again**: Re-audit your system to see security improvements.
-4. **Backup configurations**: Keep copies of any modified configuration files.
+See each script's README for exact usage, requirements, warnings, and verification steps.
+
+## After Running a Script
+
+After running a script:
+
+1. Review the script output for warnings or manual follow-up steps.
+2. Verify the specific service, account, firewall, or configuration that was changed.
+3. Keep any backups created by the script until you are confident the system is working correctly.
+4. Re-run relevant audits or service checks after applying changes.
 
 > [!WARNING]
 > The SSHD hardening script modifies SSH configurations. Ensure you have alternative access to your system before applying changes in production environments.
 
-## Tested On
+## Compatibility
 
-All of the scripts should work on most, if not all, Linux distributions with Bash v4.0+ installed. With that said, below is a list of Linux distributions that the scripts have been officially tested and are confirmed to work on.
+The scripts target Linux systems with Bash 4.0 or newer. Compatibility varies by script because each one touches different tools, services, and configuration files.
 
-| Distributions | Distro Versions        |
-| ------------- | ---------------------- |
-| Ubuntu        | 24.04, 22.04, 20.04    |
-| Debian        | 11, 10, 9              |
+Refer to each script's README for tested distributions and script-specific compatibility notes.
 
 ## Other Resources
 
@@ -144,4 +152,4 @@ Please use [GitHub Issues](https://github.com/StrangeRanger/linux-security-scrip
 
 ## License
 
-Licensing may vary by tool; see individual file headers.
+Licensing may vary by script; see individual file headers.
