@@ -32,15 +32,30 @@ readonly C_MODULES_ENABLED="/etc/nginx/modules-enabled"
 readonly C_MODSEC_PATH="/etc/nginx/modsec"
 readonly C_MODSEC_CONF_PATH="$C_MODSEC_PATH/modsecurity.conf"
 readonly C_MAIN_CONF_PATH="$C_MODSEC_PATH/main.conf"
+readonly C_REQUIRED_PKGS=(
+    git
+    autoconf
+    automake
+    build-essential
+    libcurl4-openssl-dev
+    libgeoip-dev
+    libpcre2-dev
+    libtool
+    libxml2-dev
+    libyajl-dev
+    pkgconf
+    wget
+    zlib1g-dev
+)
 
-# TODO: ERROR CATCHING ELSE WILL JUST FAIL SILENTLY IF NGINX IS NOT INSTALLED OR NOT IN PATH
-C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
-C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
-C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<<"$C_NGINX_CONFIG_ARGS" | head -n 1)"
-readonly C_NGINX_VERSION C_NGINX_CONFIG_ARGS C_MODULES_PATH
+C_NGINX_VERSION=""
+C_NGINX_CONFIG_ARGS=""
+C_MODULES_PATH=""
 
 modsecurity_clone_exists=false
 coreruleset_clone_exists=false
+required_pkgs=("${C_REQUIRED_PKGS[@]}")
+missing_pkgs=()
 
 
 ####[Functions]#############################################################################
@@ -66,15 +81,57 @@ require_non_empty() {
     [[ -n "$var_value" ]] || error_exit "Required value '${var_name}' is empty"
 }
 
+require_pkg() {
+    local required_pkg="$1"
+
+    for pkg in "${required_pkgs[@]}"; do
+        [[ $pkg == "$required_pkg" ]] && return 0
+    done
+
+    required_pkgs+=("$required_pkg")
+}
+
 
 ####[ Trapping & Initial Checks ]###########################################################
 
 
 trap on_err ERR
 
-require_non_empty "C_NGINX_VERSION" "$C_NGINX_VERSION"
-require_non_empty "C_NGINX_CONFIG_ARGS" "$C_NGINX_CONFIG_ARGS"
-require_non_empty "C_MODULES_PATH" "$C_MODULES_PATH"
+
+####[ Initial Checks ]######################################################################
+
+
+if (( EUID != 0 )); then
+    error_exit "This script must be run with root privileges"
+fi
+
+if command -v nginx &>/dev/null; then
+    C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
+    C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
+    C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<<"$C_NGINX_CONFIG_ARGS" | head -n 1)"
+    require_non_empty "C_NGINX_VERSION" "$C_NGINX_VERSION"
+    require_non_empty "C_NGINX_CONFIG_ARGS" "$C_NGINX_CONFIG_ARGS"
+    require_non_empty "C_MODULES_PATH" "$C_MODULES_PATH"
+else
+    error_exit "Nginx is not installed or not in PATH"
+fi
+
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_image_filter_module* ]] && require_pkg "libgd-dev"
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_perl_module* ]] && require_pkg "libperl-dev"
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_xslt_module* ]] && require_pkg "libxslt1-dev"
+[[ $C_NGINX_CONFIG_ARGS == *ssl* ]] && require_pkg "libssl-dev"
+
+for pkg in "${required_pkgs[@]}"; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        missing_pkgs+=("$pkg")
+    fi
+done
+
+if (( ${#missing_pkgs[@]} > 0 )); then
+    echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
+    apt-get update
+    apt-get install -y "${missing_pkgs[@]}"
+fi
 
 
 ####[ Main ]################################################################################
