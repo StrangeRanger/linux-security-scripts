@@ -15,10 +15,16 @@ Use this script for hosts where public web traffic should reach the origin serve
 
 ## Usage
 
-Run the script from the repository root:
+From the repository root:
 
 ```bash
 sudo ./hardening/UFW\ Cloudflare/ufw-cloudflare.bash
+```
+
+OR from the script directory:
+
+```bash
+sudo ./ufw-cloudflare.bash
 ```
 
 ## Execution Summary
@@ -50,7 +56,6 @@ The temporary backup is removed during normal cleanup.
 
 ## Safety Notes
 
-- Make sure you have recovery access before running it on a remote system.
 - Direct origin access may remain possible through other open ports or non-UFW firewall layers.
 
 ## Verify

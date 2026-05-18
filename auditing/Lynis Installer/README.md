@@ -14,10 +14,16 @@ Downloads [Lynis](https://github.com/CISOfy/lynis), a security auditing tool for
 
 ## Usage
 
-Run the installer from the repository root:
+From the repository root:
 
 ```bash
 ./auditing/Lynis\ Installer/lynis-installer.bash
+```
+
+OR from the script directory:
+
+```bash
+./lynis-installer.bash
 ```
 
 ## After Installation
@@ -26,10 +32,11 @@ To run a Lynis system audit:
 
 ```bash
 cd ~/lynis
+clear
 sudo ./lynis audit system
 ```
 
-Review the Lynis output before applying any hardening changes. Lynis findings are recommendations, not a replacement for understanding the system's role and access requirements.
+Before applying hardening changes, review the Lynis output carefully. Treat its findings as recommendations, not as a replacement for understanding your system’s security posture.
 
 ## Tested On
 

@@ -1,6 +1,6 @@
 # Root Locker
 
-Locks the root account to prevent direct root login.
+Locks the root account password to prevent password-based root logins.
 
 > [!NOTE]
 > This does not remove administrative access for users who already have valid sudo privileges. Users may still be able to gain a root shell through tools such as `sudo su` or `sudo -i`.
@@ -13,16 +13,17 @@ Locks the root account to prevent direct root login.
 
 ## Usage
 
-Run the script from the repository root:
+From the repository root:
 
 ```bash
 sudo ./hardening/Root\ Locker/root-locker.bash
 ```
 
-## Safety Notes
+OR from the script directory:
 
-- Confirm that at least one non-root user has working sudo access before running this script.
-- Do not run this on a system where direct root login is the only available administrative access path.
+```bash
+sudo ./root-locker.bash
+```
 
 ## Verify
 
@@ -31,6 +32,8 @@ Check the root account state with:
 ```bash
 sudo passwd -S root
 ```
+
+The second field in the output shows the account status. `L` means the password is locked.
 
 You can also confirm sudo access from a non-root administrative account:
 
