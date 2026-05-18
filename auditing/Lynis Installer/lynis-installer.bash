@@ -11,24 +11,25 @@
 #
 ########################################################################################
 
-C_YELLOW="$(printf '\033[1;33m')"
-C_GREEN="$(printf '\033[0;32m')"
-C_BLUE="$(printf '\033[0;34m')"
-C_CYAN="$(printf '\033[0;36m')"
-C_RED="$(printf '\033[1;31m')"
-C_NC="$(printf '\033[0m')"
 
-C_SUCCESS="${C_GREEN}==>${C_NC} "
-C_ERROR="${C_RED}ERROR:${C_NC} "
-C_WARNING="${C_YELLOW}==>${C_NC} "
-C_INFO="${C_BLUE}==>${C_NC} "
-C_NOTE="${C_CYAN}==>${C_NC} "
+readonly C_YELLOW=$'\033[1;33m'
+readonly C_GREEN=$'\033[0;32m'
+readonly C_BLUE=$'\033[0;34m'
+readonly C_CYAN=$'\033[0;36m'
+readonly C_RED=$'\033[1;31m'
+readonly C_NC=$'\033[0m'
+
+readonly C_ERROR="${C_RED}ERROR:${C_NC} "
+readonly C_SUCC="${C_GREEN}==>${C_NC} "
+readonly C_WARN="${C_YELLOW}==>${C_NC} "
+readonly C_INFO="${C_BLUE}==>${C_NC} "
+readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
 
 read -rp "${C_NOTE}We will now download lynis. Press [Enter] to continue."
 
 if [[ -d "$HOME/lynis" ]]; then
-    echo "${C_WARNING}Lynis is already downloaded to your system" >&2
+    echo "${C_WARN}Lynis is already downloaded to your system" >&2
     echo "${C_NOTE}  Current location: '$HOME/lynis'"
     echo -e "\n${C_INFO}Exiting..."
     exit 0
@@ -47,6 +48,6 @@ git clone https://github.com/CISOfy/lynis || {
     exit 1
 }
 
-echo -e "\n${C_SUCCESS}Lynis has been downloaded to your system"
+echo -e "\n${C_SUCC}Lynis has been downloaded to your system"
 echo "${C_NOTE}To perform a system scan with lynis, execute the following command" \
     "in the lynis root directory: sudo ./lynis audit system"

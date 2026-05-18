@@ -12,16 +12,17 @@
 #
 ########################################################################################
 
-C_GREEN="$(printf '\033[0;32m')"
-C_BLUE="$(printf '\033[0;34m')"
-C_CYAN="$(printf '\033[0;36m')"
-C_RED="$(printf '\033[1;31m')"
-C_NC="$(printf '\033[0m')"
 
-C_SUCCESS="${C_GREEN}==>${C_NC} "
-C_ERROR="${C_RED}ERROR:${C_NC} "
-C_INFO="${C_BLUE}==>${C_NC} "
-C_NOTE="${C_CYAN}==>${C_NC} "
+readonly C_GREEN=$'\033[0;32m'
+readonly C_BLUE=$'\033[0;34m'
+readonly C_CYAN=$'\033[0;36m'
+readonly C_RED=$'\033[1;31m'
+readonly C_NC=$'\033[0m'
+
+readonly C_ERROR="${C_RED}ERROR:${C_NC} "
+readonly C_SUCC="${C_GREEN}==>${C_NC} "
+readonly C_INFO="${C_BLUE}==>${C_NC} "
+readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
 
 if (( EUID != 0 )); then
@@ -38,4 +39,4 @@ usermod -L root || {
     exit 1
 }
 
-echo -e "\n${C_SUCCESS}The root account has been locked"
+echo -e "\n${C_SUCC}The root account has been locked"

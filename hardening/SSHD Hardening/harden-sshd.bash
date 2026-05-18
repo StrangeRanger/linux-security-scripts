@@ -22,17 +22,16 @@ readonly C_SESSION_BACKUP="$C_TMP_DIR/sshd_config.session_backup"
 readonly C_CONFIG_FILE_BAK="/etc/ssh/sshd_config.bak"
 readonly C_CONFIG_FILE="/etc/ssh/sshd_config"
 
-C_YELLOW="$(printf '\033[1;33m')"
-C_GREEN="$(printf '\033[0;32m')"
-C_BLUE="$(printf '\033[0;34m')"
-C_CYAN="$(printf '\033[0;36m')"
-C_RED="$(printf '\033[1;31m')"
-C_NC="$(printf '\033[0m')"
-readonly C_YELLOW C_GREEN C_BLUE C_CYAN C_RED C_NC
+readonly C_YELLOW=$'\033[1;33m'
+readonly C_GREEN=$'\033[0;32m'
+readonly C_BLUE=$'\033[0;34m'
+readonly C_CYAN=$'\033[0;36m'
+readonly C_RED=$'\033[1;31m'
+readonly C_NC=$'\033[0m'
 
-readonly C_WARNING="${C_YELLOW}==>${C_NC} "
-readonly C_SUCCESS="${C_GREEN}==>${C_NC} "
 readonly C_ERROR="${C_RED}ERROR:${C_NC} "
+readonly C_WARN="${C_YELLOW}==>${C_NC} "
+readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
@@ -96,18 +95,18 @@ clean_exit() {
 
     case "$exit_code" in
         0|1) echo "" ;;
-        129) echo -e "\n\n${C_WARNING}Hangup signal detected (SIGHUP)" ;;
-        130) echo -e "\n\n${C_WARNING}User interrupt detected (SIGINT)" ;;
-        143) echo -e "\n\n${C_WARNING}Termination signal detected (SIGTERM)" ;;
-        *)   echo -e "\n\n${C_WARNING}Exiting with code: $exit_code" ;;
+        129) echo -e "\n\n${C_WARN}Hangup signal detected (SIGHUP)" ;;
+        130) echo -e "\n\n${C_WARN}User interrupt detected (SIGINT)" ;;
+        143) echo -e "\n\n${C_WARN}Termination signal detected (SIGTERM)" ;;
+        *)   echo -e "\n\n${C_WARN}Exiting with code: $exit_code" ;;
     esac
 
     # Check if we need to restore the original configurations.
     if [[ $modifications_in_progress == true ]] && [[ -f "$C_SESSION_BACKUP" ]]; then
-        echo "${C_WARNING}Script was interrupted during configuration changes"
+        echo "${C_WARN}Script was interrupted during configuration changes"
         echo "${C_INFO}Restoring original 'sshd_config'..."
         if cp "$C_SESSION_BACKUP" "$C_CONFIG_FILE"; then
-            echo "${C_SUCCESS}Successfully restored original configurations"
+            echo "${C_SUCC}Successfully restored original configurations"
             echo "${C_INFO}Cleaning up..."
             [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
         else
@@ -145,7 +144,7 @@ fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $C_CONFIG_FILE ]]; then
-    echo "${C_WARNING}'sshd_config' doesn't exist" >&2
+    echo "${C_WARN}'sshd_config' doesn't exist" >&2
     echo "${C_NOTE}openssh-server may not be installed"
     exit 1
 fi
@@ -220,7 +219,7 @@ for key in "${!C_SSHD_CONFIG[@]}"; do
             || echo "${C_ERROR}Failed to set '${key} ${C_SSHD_CONFIG[$key]}'" >&2
     ## If the configuration is not present in the file.
     else
-        echo "${C_WARNING}'${key}' not found in configuration file" >&2
+        echo "${C_WARN}'${key}' not found in configuration file" >&2
     fi
 done
 
@@ -232,16 +231,16 @@ modifications_in_progress=false
 
 echo -e "\n${C_INFO}Restarting SSH service..."
 if systemctl restart sshd 2>/dev/null; then
-    echo "${C_SUCCESS}SSH service (sshd) restarted successfully"
+    echo "${C_SUCC}SSH service (sshd) restarted successfully"
 elif systemctl restart ssh 2>/dev/null; then
-    echo "${C_SUCCESS}SSH service (ssh) restarted successfully"
+    echo "${C_SUCC}SSH service (ssh) restarted successfully"
 else
     echo "${C_ERROR}Failed to restart SSH service (tried both 'sshd' and 'ssh')" >&2
     echo "${C_NOTE}You may need to restart the SSH service manually"
 fi
 
 echo ""
-echo "${C_SUCCESS}Finished hardening sshd"
+echo "${C_SUCC}Finished hardening sshd"
 echo "${C_NOTE}It is highly recommended to manually:"
 echo "${C_NOTE}  1) Change the default sshd port (22)"
 echo "${C_NOTE}  2) Disable PasswordAuthentication in favor of PubkeyAuthentication"
