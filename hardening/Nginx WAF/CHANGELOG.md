@@ -7,11 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+
 - Initial changelog tracking for the Nginx WAF hardening tool.
 
-## [1.0.0-beta] - 2024-01-01
+## [1.0.0-beta] - 2026-05-17
 
 ### Added
+
 - Initial beta release of the Nginx WAF hardening tool.
 - Baseline documentation and configuration for deploying and maintaining the WAF setup.
 - Initial hardening-focused rules and project structure for protecting Nginx-based deployments.
