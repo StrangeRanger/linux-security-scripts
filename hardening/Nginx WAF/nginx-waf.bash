@@ -34,8 +34,6 @@ readonly C_MODSEC_CONF_PATH="$C_MODSEC_PATH/modsecurity.conf"
 readonly C_MAIN_CONF_PATH="$C_MODSEC_PATH/main.conf"
 readonly C_REQUIRED_PKGS=(
     git
-    g++
-    apt-utils
     autoconf
     automake
     build-essential
@@ -51,6 +49,7 @@ readonly C_REQUIRED_PKGS=(
     libxslt1-dev
     libyajl-dev
     pkgconf
+    wget
     zlib1g-dev
 )
 
