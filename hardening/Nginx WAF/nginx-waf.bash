@@ -46,6 +46,7 @@ readonly C_REQUIRED_PKGS=(
     libssl-dev
     libtool
     libxml2-dev
+    libxslt1-dev
     libyajl-dev
     pkgconf
     zlib1g-dev
