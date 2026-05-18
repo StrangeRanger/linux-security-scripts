@@ -2,14 +2,15 @@
 
 Downloads [Lynis](https://github.com/CISOfy/lynis), a security auditing tool for Unix-like systems.
 
-This script only downloads Lynis. It does not audit, harden, or modify system security settings by itself.
+> [!NOTE]
+> This script only downloads Lynis. It does not audit, harden, or modify system security settings by itself.
 
 ## Requirements
 
 - Bash 4.0 or newer
 - Git
 - Internet access
-- Root privileges are not required
+- No root privileges required
 
 ## Usage
 
@@ -17,21 +18,6 @@ Run the installer from the repository root:
 
 ```bash
 ./auditing/Lynis\ Installer/lynis-installer.bash
-```
-
-The script prompts before downloading Lynis.
-
-## What It Does
-
-- Checks whether `~/lynis` already exists.
-- Changes to the current user's home directory.
-- Clones the upstream Lynis repository from GitHub.
-- Prints the command needed to run a system audit.
-
-By default, Lynis is downloaded to:
-
-```text
-~/lynis
 ```
 
 ## After Installation

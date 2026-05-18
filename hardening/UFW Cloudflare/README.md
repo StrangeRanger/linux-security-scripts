@@ -21,7 +21,7 @@ Run the script from the repository root:
 sudo ./hardening/UFW\ Cloudflare/ufw-cloudflare.bash
 ```
 
-## What It Does
+## Installation Summary
 
 - Reads existing UFW rules marked with the `Cloudflare IP` comment.
 - Downloads current Cloudflare IPv4 and IPv6 ranges from Cloudflare.

@@ -1,8 +1,11 @@
 # Nginx WAF
 
+> [!CAUTION]
+> Script is currently in beta.
+
 Installs and configures ModSecurity with the OWASP Core Rule Set for Nginx.
 
-This script is currently beta. It builds software from source, installs packages, writes Nginx configuration, enables ModSecurity, tests the Nginx configuration, and restarts Nginx.
+This script builds software from source, installs packages, writes Nginx configuration, enables ModSecurity, tests the Nginx configuration, and restarts Nginx.
 
 ## Requirements
 
@@ -11,7 +14,6 @@ This script is currently beta. It builds software from source, installs packages
 - Nginx installed and available in `PATH`
 - A Debian/Ubuntu-style system with `apt-get` and `dpkg`
 - Internet access
-- Build tools and development libraries, installed automatically when missing
 
 The script installs required packages such as:
 
@@ -33,14 +35,14 @@ It may install additional development packages depending on how the installed Ng
 
 ## Usage
 
-Run the script from the its root dir:
+Run the script from its directory:
 
 ```bash
 cd hardening/Nginx\ WAF/
 sudo ./nginx-waf.bash
 ```
 
-## What It Does
+## Installation Summary
 
 - Detects the installed Nginx version and configure arguments.
 - Installs missing build dependencies through `apt-get`.
@@ -79,7 +81,6 @@ The script also creates or reuses build directories in the current working direc
 
 - Run this in a test environment before using it on a production web server.
 - Review local Nginx packaging conventions before running it on systems with custom Nginx builds.
-- The script restarts Nginx after `nginx -t` succeeds.
 - The OWASP Core Rule Set can block legitimate traffic until tuned for the application.
 - Existing local changes in reused `ModSecurity`, `ModSecurity-nginx`, or CRS clone directories may affect the run.
 

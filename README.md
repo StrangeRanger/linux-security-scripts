@@ -32,7 +32,7 @@ Each script is intended to be used on its own. There is no required install orde
 
 ## Tools and Scripts
 
-Below is a list of scripts included in this repository. Each script has its own README with requirements, usage, compatibility notes, safety warnings, and version history.
+Below is a list of scripts included in this repository. Each script has its own README with requirements, usage, compatibility notes, safety warnings, and a changelog link.
 
 | Script | Purpose | Category | Details |
 |--------|---------|----------|---------|
@@ -41,10 +41,6 @@ Below is a list of scripts included in this repository. Each script has its own 
 | **SSHD Hardening** | Harden OpenSSH server configuration based on Lynis recommendations. | Hardening | [README](hardening/SSHD%20Hardening/README.md) / [Script](hardening/SSHD%20Hardening/harden-sshd.bash) |
 | **UFW Cloudflare** | Configure UFW to allow HTTP/HTTPS traffic only from Cloudflare IP ranges. | Hardening | [README](hardening/UFW%20Cloudflare/README.md) / [Script](hardening/UFW%20Cloudflare/ufw-cloudflare.bash) |
 | **Nginx WAF** | Install and configure ModSecurity with the OWASP Core Rule Set for Nginx. | Hardening | [README](hardening/Nginx%20WAF/README.md) / [Script](hardening/Nginx%20WAF/nginx-waf.bash) |
-| **Disable USB** | Experimental script intended to disable the `usb-storage` kernel module. | Hardening | [README](hardening/Disable%20USB/README.md) / [Script](hardening/Disable%20USB/disable-usb.bash) |
-
-> [!NOTE]
-> All scripts include version information in their headers. Check the README and CHANGELOG.md in each script directory for script-specific details.
 
 ## Getting Started
 
