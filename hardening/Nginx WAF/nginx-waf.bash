@@ -32,6 +32,23 @@ readonly C_MODULES_ENABLED="/etc/nginx/modules-enabled"
 readonly C_MODSEC_PATH="/etc/nginx/modsec"
 readonly C_MODSEC_CONF_PATH="$C_MODSEC_PATH/modsecurity.conf"
 readonly C_MAIN_CONF_PATH="$C_MODSEC_PATH/main.conf"
+readonly C_REQUIRED_PKGS=(
+    git
+    g++
+    apt-utils
+    autoconf
+    automake
+    build-essential
+    libcurl4-openssl-dev
+    libgeoip-dev
+    liblmdb-dev
+    libpcre2-dev
+    libtool
+    libxml2-dev
+    libyajl-dev
+    pkgconf
+    zlib1g-dev
+)
 
 C_NGINX_VERSION=""
 C_NGINX_CONFIG_ARGS=""
@@ -39,6 +56,7 @@ C_MODULES_PATH=""
 
 modsecurity_clone_exists=false
 coreruleset_clone_exists=false
+missing_pkgs=()
 
 
 ####[Functions]#############################################################################
@@ -87,6 +105,18 @@ if command -v nginx &>/dev/null; then
     require_non_empty "C_MODULES_PATH" "$C_MODULES_PATH"
 else
     error_exit "Nginx is not installed or not in PATH"
+fi
+
+for pkg in "${C_REQUIRED_PKGS[@]}"; do
+    if ! dpkg -s "$pkg" &>/dev/null; then
+        missing_pkgs+=("$pkg")
+    fi
+done
+
+if (( ${#missing_pkgs[@]} > 0 )); then
+    echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
+    apt-get update
+    apt-get install -y "${missing_pkgs[@]}"
 fi
 
 
