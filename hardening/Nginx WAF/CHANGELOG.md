@@ -6,14 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
-
-- Initial changelog tracking for the Nginx WAF hardening tool.
-
 ## [1.0.0-beta] - 2026-05-17
 
 ### Added
 
-- Initial beta release of the Nginx WAF hardening tool.
-- Baseline documentation and configuration for deploying and maintaining the WAF setup.
-- Initial hardening-focused rules and project structure for protecting Nginx-based deployments.
+- Added Nginx WAF hardening tool for installing and configuring ModSecurity with Nginx.
+- Added automatic installation of required build dependencies for ModSecurity and Nginx dynamic module compilation.
+- Added ModSecurity v3 source build and installation workflow.
+- Added ModSecurity-nginx dynamic module build using the installed Nginx version and configure arguments.
+- Added Nginx module loading configuration through `modules-available` and `modules-enabled`.
+- Added OWASP Core Rule Set installation and ModSecurity main configuration generation.
+- Added Nginx configuration validation and restart after setup.
+
+### Fixed
+
+- Added missing build dependencies required by Nginx SSL, XSLT, image filter, Perl, gzip, and ModSecurity modules.
+- Removed redundant or unused dependency entries from the required package list.
