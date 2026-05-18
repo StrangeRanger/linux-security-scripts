@@ -44,6 +44,7 @@ readonly C_REQUIRED_PKGS=(
     libgeoip-dev
     liblmdb-dev
     libpcre2-dev
+    libperl-dev
     libssl-dev
     libtool
     libxml2-dev
