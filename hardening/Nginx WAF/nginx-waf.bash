@@ -43,6 +43,7 @@ readonly C_REQUIRED_PKGS=(
     libgeoip-dev
     liblmdb-dev
     libpcre2-dev
+    libssl-dev
     libtool
     libxml2-dev
     libyajl-dev
