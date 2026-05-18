@@ -11,7 +11,7 @@
 #
 # Version: v2.2.0
 # License: MIT License
-#          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2026 Hunter T. (StrangeRanger)
 #
 ############################################################################################
 ####[ Global Variables ]####################################################################
