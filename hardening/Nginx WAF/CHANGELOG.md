@@ -22,3 +22,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added missing build dependencies required by Nginx SSL, XSLT, image filter, Perl, gzip, and ModSecurity modules.
 - Removed redundant or unused dependency entries from the required package list.
+- Limited Nginx module-specific build dependencies to systems whose installed Nginx was built with those modules.

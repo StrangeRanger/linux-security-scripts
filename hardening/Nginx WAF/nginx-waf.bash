@@ -38,14 +38,10 @@ readonly C_REQUIRED_PKGS=(
     automake
     build-essential
     libcurl4-openssl-dev
-    libgd-dev
     libgeoip-dev
     libpcre2-dev
-    libperl-dev
-    libssl-dev
     libtool
     libxml2-dev
-    libxslt1-dev
     libyajl-dev
     pkgconf
     wget
@@ -58,6 +54,7 @@ C_MODULES_PATH=""
 
 modsecurity_clone_exists=false
 coreruleset_clone_exists=false
+required_pkgs=("${C_REQUIRED_PKGS[@]}")
 missing_pkgs=()
 
 
@@ -82,6 +79,16 @@ require_non_empty() {
     local var_value="${2:-}"
 
     [[ -n "$var_value" ]] || error_exit "Required value '${var_name}' is empty"
+}
+
+require_pkg() {
+    local required_pkg="$1"
+
+    for pkg in "${required_pkgs[@]}"; do
+        [[ $pkg == "$required_pkg" ]] && return 0
+    done
+
+    required_pkgs+=("$required_pkg")
 }
 
 
@@ -109,7 +116,12 @@ else
     error_exit "Nginx is not installed or not in PATH"
 fi
 
-for pkg in "${C_REQUIRED_PKGS[@]}"; do
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_image_filter_module* ]] && require_pkg "libgd-dev"
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_perl_module* ]] && require_pkg "libperl-dev"
+[[ $C_NGINX_CONFIG_ARGS == *--with-http_xslt_module* ]] && require_pkg "libxslt1-dev"
+[[ $C_NGINX_CONFIG_ARGS == *ssl* ]] && require_pkg "libssl-dev"
+
+for pkg in "${required_pkgs[@]}"; do
     if ! dpkg -s "$pkg" &>/dev/null; then
         missing_pkgs+=("$pkg")
     fi
