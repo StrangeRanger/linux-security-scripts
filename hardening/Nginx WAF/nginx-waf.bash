@@ -40,6 +40,7 @@ readonly C_REQUIRED_PKGS=(
     automake
     build-essential
     libcurl4-openssl-dev
+    libgd-dev
     libgeoip-dev
     liblmdb-dev
     libpcre2-dev
