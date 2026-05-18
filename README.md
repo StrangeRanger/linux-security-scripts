@@ -113,9 +113,6 @@ After running a script:
 3. Keep any backups created by the script until you are confident the system is working correctly.
 4. Re-run relevant audits or service checks after applying changes.
 
-> [!WARNING]
-> The SSHD hardening script modifies SSH configurations. Ensure you have alternative access to your system before applying changes in production environments.
-
 ## Compatibility
 
 The scripts target Linux systems with Bash 4.0 or newer. Compatibility varies by script because each one touches different tools, services, and configuration files.

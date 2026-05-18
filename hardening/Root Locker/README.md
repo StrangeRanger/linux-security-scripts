@@ -23,7 +23,6 @@ sudo ./hardening/Root\ Locker/root-locker.bash
 
 - Confirm that at least one non-root user has working sudo access before running this script.
 - Do not run this on a system where direct root login is the only available administrative access path.
-- This script does not modify SSH configuration. If SSH allows root login through another authentication method, review `sshd_config` separately.
 
 ## Verify
 
