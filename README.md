@@ -38,6 +38,7 @@ Below is a list of tools included in this repository.
 | **[Root Locker](hardening/Root%20Locker/root-locker.bash)** | Locks the root account to prevent direct logins. | Hardening | Root privileges | Preserves sudo access |
 | **[SSHD Hardening](hardening/SSHD%20Hardening/harden-sshd.bash)** | Harden OpenSSH server (sshd) per Lynis recommendations. | Hardening | Root privileges | Creates backups |
 | **[UFW Cloudflare](hardening/UFW%20Cloudflare/ufw-cloudflare.bash)** | Configure UFW to only allow HTTP/HTTPS from Cloudflare IP ranges. | Hardening | Root privileges, UFW, Internet connection | Creates backups |
+| **[Nginx WAF](hardening/Nginx%20WAF/nginx-waf.bash)** | Install and configure ModSecurity with OWASP Core Rule Set for Nginx. | Hardening | Root privileges, Nginx, Internet connection | **IMPORTANT:** Currently in **Beta** |
 
 > [!NOTE]
 > All scripts include version information in their headers. Check individual CHANGELOG.md files in each tool's directory for version history and updates.
