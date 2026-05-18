@@ -7,7 +7,7 @@
 #
 # Version: v1.0.9
 # License: MIT License
-#          Copyright (c) 2020-2025 Hunter T. (StrangeRanger)
+#          Copyright (c) 2020-2026 Hunter T. (StrangeRanger)
 #
 ########################################################################################
 
