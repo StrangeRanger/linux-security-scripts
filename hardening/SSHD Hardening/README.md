@@ -2,7 +2,7 @@
 
 Hardens the OpenSSH server configuration using settings aligned with Lynis recommendations.
 
-> [!WARNING]
+> [!NOTE]
 > This script modifies the system SSH daemon configuration. Treat it as a high-risk change on remote systems because an invalid or overly restrictive SSH configuration can lock you out.
 
 ## Requirements
@@ -20,8 +20,6 @@ Run the script from the repository root:
 ```bash
 sudo ./hardening/SSHD\ Hardening/harden-sshd.bash
 ```
-
-The script prompts before changing SSH configuration.
 
 ## Changes Made
 

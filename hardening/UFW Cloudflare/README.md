@@ -21,7 +21,7 @@ Run the script from the repository root:
 sudo ./hardening/UFW\ Cloudflare/ufw-cloudflare.bash
 ```
 
-## Installation Summary
+## Execution Summary
 
 - Reads existing UFW rules marked with the `Cloudflare IP` comment.
 - Downloads current Cloudflare IPv4 and IPv6 ranges from Cloudflare.
@@ -50,9 +50,7 @@ The temporary backup is removed during normal cleanup.
 
 ## Safety Notes
 
-- This script changes firewall rules. Make sure you have recovery access before running it on a remote system.
-- Confirm that SSH or other management ports are already allowed as needed before changing web rules.
-- This script targets HTTP and HTTPS only: TCP ports `80` and `443`.
+- Make sure you have recovery access before running it on a remote system.
 - Direct origin access may remain possible through other open ports or non-UFW firewall layers.
 
 ## Verify

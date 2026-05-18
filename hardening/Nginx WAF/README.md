@@ -42,7 +42,7 @@ cd hardening/Nginx\ WAF/
 sudo ./nginx-waf.bash
 ```
 
-## Installation Summary
+## Execution Summary
 
 - Detects the installed Nginx version and configure arguments.
 - Installs missing build dependencies through `apt-get`.
