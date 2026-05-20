@@ -42,11 +42,8 @@ stage=0
 
 
 ####
-# Cleanly exit the script by removing temporary files, restoring backups if needed, and
-# displaying a message based on the exit code.
-#
-# PARAMETERS:
-#   - $1: exit_code (Required)
+# Remove temporary files, restore backups if needed, and display a message based on the exit
+# code.
 clean_exit() {
     local exit_code="$1"
 
