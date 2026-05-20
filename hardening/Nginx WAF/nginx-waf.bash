@@ -93,11 +93,6 @@ trap on_err ERR
 ####[ Initial Checks ]######################################################################
 
 
-if (( EUID != 0 )); then
-    echo "${C_ERROR}This script must be run with root privileges"
-    exit 1
-fi
-
 if command -v nginx &>/dev/null; then
     C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
     C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
@@ -204,7 +199,7 @@ make modules
 echo "${C_INFO}Installing ModSecurity Nginx module..."
 mkdir -p "$C_MODULES_PATH"
 sudo cp objs/"$C_SO_FILE" "$C_MODULES_PATH"
-sudo chmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
+dchmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
 popd >/dev/null
 
 echo "${C_INFO}Setting up Nginx configuration for ModSecurity module..."
