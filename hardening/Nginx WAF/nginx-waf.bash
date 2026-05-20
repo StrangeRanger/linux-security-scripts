@@ -63,7 +63,8 @@ missing_pkgs=()
 
 on_err() {
     local exit_code=$?
-    error_exit "Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" "$exit_code"
+    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"
+    echo "${C_ERROR}Exit code: $exit_code"
 }
 
 require_non_empty() {
@@ -117,8 +118,8 @@ done
 
 if (( ${#missing_pkgs[@]} > 0 )); then
     echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
-    apt-get update
-    apt-get install -y "${missing_pkgs[@]}"
+    sudo apt get update
+    sudo apt get install -y "${missing_pkgs[@]}"
 fi
 
 
@@ -161,7 +162,7 @@ echo "${C_INFO}Compiling ModSecurity..."
 make -j"$(nproc --ignore=1)"
 
 echo "${C_INFO}Installing ModSecurity..."
-make install
+sudo make install
 popd >/dev/null
 
 ###
@@ -197,9 +198,9 @@ echo "${C_INFO}Compiling ModSecurity Nginx module..."
 make modules
 
 echo "${C_INFO}Installing ModSecurity Nginx module..."
-mkdir -p "$C_MODULES_PATH"
+sudo mkdir -p "$C_MODULES_PATH"
 sudo cp objs/"$C_SO_FILE" "$C_MODULES_PATH"
-dchmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
+sudo chmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
 popd >/dev/null
 
 echo "${C_INFO}Setting up Nginx configuration for ModSecurity module..."
