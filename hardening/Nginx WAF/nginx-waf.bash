@@ -6,7 +6,7 @@
 # Nginx to load the module, and sets up the OWASP Core Rule Set for basic protection against
 # common web vulnerabilities.
 #
-# Version: v1.0.0-beta
+# Version: v1.0.0-beta.3
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
 #
@@ -61,17 +61,10 @@ missing_pkgs=()
 ####[Functions]#############################################################################
 
 
-error_exit() {
-    local message="${1:-An unknown error occurred}"
-    local exit_code="${2:-1}"
-
-    echo "${C_ERROR}${message}" >&2
-    exit "$exit_code"
-}
-
 on_err() {
     local exit_code=$?
-    error_exit "Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" "$exit_code"
+    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"
+    echo "${C_ERROR}Exit code: $exit_code"
 }
 
 require_non_empty() {
@@ -101,10 +94,6 @@ trap on_err ERR
 ####[ Initial Checks ]######################################################################
 
 
-if (( EUID != 0 )); then
-    error_exit "This script must be run with root privileges"
-fi
-
 if command -v nginx &>/dev/null; then
     C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
     C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
@@ -129,15 +118,15 @@ done
 
 if (( ${#missing_pkgs[@]} > 0 )); then
     echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
-    apt-get update
-    apt-get install -y "${missing_pkgs[@]}"
+    sudo apt get update
+    sudo apt get install -y "${missing_pkgs[@]}"
 fi
 
 
 ####[ Main ]################################################################################
 
 
-echo "${C_INFO}Starting ModSecurity installation and configuration process..."
+read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
 
 ###
 ### [ Clone and build ModSecurity ]
@@ -173,7 +162,7 @@ echo "${C_INFO}Compiling ModSecurity..."
 make -j"$(nproc --ignore=1)"
 
 echo "${C_INFO}Installing ModSecurity..."
-make install
+sudo make install
 popd >/dev/null
 
 ###
@@ -209,7 +198,7 @@ echo "${C_INFO}Compiling ModSecurity Nginx module..."
 make modules
 
 echo "${C_INFO}Installing ModSecurity Nginx module..."
-mkdir -p "$C_MODULES_PATH"
+sudo mkdir -p "$C_MODULES_PATH"
 sudo cp objs/"$C_SO_FILE" "$C_MODULES_PATH"
 sudo chmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
 popd >/dev/null
@@ -279,4 +268,10 @@ sudo nginx -t
 echo "${C_INFO}Restarting Nginx to apply changes..."
 sudo systemctl restart nginx
 
-echo "${C_SUCC}DONE"
+echo "${C_SUCC}Finished installing and configuring ModSecurity WAF for Nginx"
+cat <<EOF
+${C_NOTE}To enable ModSecurity WAF for a site, add these lines to its Nginx server block, for example in '/etc/nginx/sites-enabled/':
+${C_CYAN}## Modsecurity settings
+modsecurity on;
+modsecurity_rules_file /etc/nginx/modsec/main.conf;${C_NC}
+EOF

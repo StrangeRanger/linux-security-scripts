@@ -33,11 +33,16 @@ It may install additional development packages depending on how the installed Ng
 
 ## Usage
 
-Run the script from its directory:
+From the repository root:
 
 ```bash
-cd hardening/Nginx\ WAF/
-sudo ./nginx-waf.bash
+./hardening/Nginx\ WAF/nginx-waf.bash
+```
+
+OR from the script directory:
+
+```bash
+./nginx-waf.bash
 ```
 
 ## Execution Summary

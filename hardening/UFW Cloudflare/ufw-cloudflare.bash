@@ -104,6 +104,8 @@ fi
 ####[ Main ]################################################################################
 
 
+read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to continue."
+
 ###
 ### [ Initial Setup ]
 ###

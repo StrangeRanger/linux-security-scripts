@@ -1,6 +1,6 @@
 # SSHD Hardening
 
-Hardens the OpenSSH server configuration using settings aligned with Lynis recommendations.
+Hardens the OpenSSH server configuration using settings aligned with [Lynis](https://github.com/CISOfy/lynis) recommendations.
 
 > [!CAUTION]
 > This script modifies the system SSH daemon configuration. Treat it as a high-risk change on remote systems because an invalid or overly restrictive SSH configuration can lock you out.
@@ -60,20 +60,12 @@ The script creates two backup types:
 - Permanent backup: `/etc/ssh/sshd_config.bak`
 - Session backup: temporary backup used for automatic restoration if the script is interrupted during configuration changes
 
-If `/etc/ssh/sshd_config.bak` already exists, the script asks whether to overwrite it.
-
 ## Safety Notes
 
 - Keep your current SSH session open while testing a new login.
 - Review whether agent forwarding, TCP forwarding, X11 forwarding, and session limits are compatible with your use case.
 
 ## Verify
-
-Validate the SSH configuration before relying on it:
-
-```bash
-sudo sshd -t
-```
 
 Check the active SSH service status:
 
