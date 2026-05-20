@@ -35,7 +35,7 @@ readonly C_NOTE="${C_CYAN}==>${C_NC} "
 current_cloudflare_rule_numbers=()
 current_cloudflare_ip_ranges=()
 new_cloudflare_ip_ranges=()
-stage=0
+modifications_in_progress=false
 
 
 ####[ Function ]############################################################################
@@ -55,21 +55,20 @@ clean_exit() {
         *)   echo -e "\n\n${C_WARN}Exiting with code: $exit_code" ;;
     esac
 
-    case $stage in
-        2|3|4)
-            echo "${C_WARN}Interrupt occurred during stage '$stage'; incomplete changes"
-            echo "${C_INFO}Temporarily disabling UFW..."
-            ufw disable
-            echo "${C_INFO}Restoring previous UFW rules..."
-            sudo tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
-            echo "${C_INFO}Re-enabling UFW..."
-            ufw enable
-            echo "${C_INFO}Displaying current UFW status..."
-            echo "---"
-            ufw status verbose
-            echo "---"
-            ;;
-    esac
+    # Check if we need to restore the original configurations.
+    if [[ $modifications_in_progress == true ]]; then
+        echo "${C_WARN}Interrupt occurred during stage '$stage'; incomplete changes"
+        echo "${C_INFO}Temporarily disabling UFW..."
+        ufw disable
+        echo "${C_INFO}Restoring previous UFW rules..."
+        sudo tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
+        echo "${C_INFO}Re-enabling UFW..."
+        ufw enable
+        echo "${C_INFO}Displaying current UFW status..."
+        echo "---"
+        ufw status verbose
+        echo "---"
+    fi
 
     if [[ -d "$C_TMP_DIR" ]]; then
         echo "${C_INFO}Cleaning up..."
@@ -107,8 +106,6 @@ read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to 
 ### [ Initial Setup ]
 ###
 
-stage=1
-
 echo "${C_INFO}Retrieving current Cloudflare IP rules from UFW..."
 while IFS= read -r line; do
     read -ra fields <<< "$line"
@@ -130,7 +127,7 @@ tar -C /etc -cf "$C_UFW_BACKUP_ARCHIVE" ufw
 ### Add temporary rule to prevent traffic disruption.
 ###
 
-stage=2
+modifications_in_progress=true
 
 echo "${C_INFO}Temporarily opening ports 80 and 443 from any IP address..."
 if ! ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
@@ -175,7 +172,6 @@ unset current_cloudflare_rule_numbers
 ### Add the new Cloudflare IP ranges.
 ###
 
-stage=4
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
 sleep "$C_SLEEP_TIME"
 
@@ -193,7 +189,6 @@ done
 ### Perform the last modifications to UFW.
 ###
 
-stage=5
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
 sleep "$C_SLEEP_TIME"
 
@@ -202,6 +197,8 @@ if ! ufw delete allow from any to any port 80,443 proto tcp comment "Temporary r
     echo "${C_ERROR}Failed to remove temporary rule" >&2
     echo "${C_NOTE}Please check your UFW configuration and remove it manually"
 fi
+
+modifications_in_progress=false
 
 sleep "$C_SLEEP_TIME"
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
