@@ -2,7 +2,7 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.1
+# Version: v1.0.2
 # License: MIT License
 #          Copyright (c) 2024-2026 Hunter T. (StrangeRanger)
 #
