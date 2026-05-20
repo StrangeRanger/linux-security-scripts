@@ -14,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Added missing `sudo` where needed.
-- Fixed bad `apt get` command in the script.
 
 ### Removed
 
