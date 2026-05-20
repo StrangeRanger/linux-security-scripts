@@ -110,6 +110,16 @@ fi
 [[ $C_NGINX_CONFIG_ARGS == *--with-http_xslt_module* ]] && require_pkg "libxslt1-dev"
 [[ $C_NGINX_CONFIG_ARGS == *ssl* ]] && require_pkg "libssl-dev"
 
+
+####[ Main ]################################################################################
+
+
+read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
+
+###
+### [ Install Required Packages ]
+###
+
 for pkg in "${required_pkgs[@]}"; do
     if ! dpkg -s "$pkg" &>/dev/null; then
         missing_pkgs+=("$pkg")
@@ -118,15 +128,9 @@ done
 
 if (( ${#missing_pkgs[@]} > 0 )); then
     echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
-    sudo apt get update
-    sudo apt get install -y "${missing_pkgs[@]}"
+    sudo apt-get update
+    sudo apt-get install -y "${missing_pkgs[@]}"
 fi
-
-
-####[ Main ]################################################################################
-
-
-read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
 
 ###
 ### [ Clone and build ModSecurity ]
@@ -271,7 +275,9 @@ sudo systemctl restart nginx
 echo "${C_SUCC}Finished installing and configuring ModSecurity WAF for Nginx"
 cat <<EOF
 ${C_NOTE}To enable ModSecurity WAF for a site, add these lines to its Nginx server block, for example in '/etc/nginx/sites-enabled/':
-${C_CYAN}## Modsecurity settings
-modsecurity on;
-modsecurity_rules_file /etc/nginx/modsec/main.conf;${C_NC}
+${C_CYAN}
+    ## Modsecurity settings
+    modsecurity on;
+    modsecurity_rules_file /etc/nginx/modsec/main.conf;
+${C_NC}
 EOF
