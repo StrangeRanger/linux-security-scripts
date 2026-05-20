@@ -110,6 +110,12 @@ fi
 [[ $C_NGINX_CONFIG_ARGS == *--with-http_xslt_module* ]] && require_pkg "libxslt1-dev"
 [[ $C_NGINX_CONFIG_ARGS == *ssl* ]] && require_pkg "libssl-dev"
 
+
+####[ Main ]################################################################################
+
+
+read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
+
 for pkg in "${required_pkgs[@]}"; do
     if ! dpkg -s "$pkg" &>/dev/null; then
         missing_pkgs+=("$pkg")
@@ -121,12 +127,6 @@ if (( ${#missing_pkgs[@]} > 0 )); then
     sudo apt-get update
     sudo apt-get install -y "${missing_pkgs[@]}"
 fi
-
-
-####[ Main ]################################################################################
-
-
-read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
 
 ###
 ### [ Clone and build ModSecurity ]
