@@ -8,8 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Add prompt before executing the script.
-- Add manual instructions to enable ModSecurity WAF for a site.
+- Added prompt before executing the script.
+- Added manual instructions to enable ModSecurity WAF for a site.
+
+### Fixed
+
+- Added missing `sudo` where needed.
 
 ### Removed
 
