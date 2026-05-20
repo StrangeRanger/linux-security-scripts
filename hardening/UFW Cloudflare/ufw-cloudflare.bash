@@ -57,7 +57,6 @@ clean_exit() {
 
     # Check if we need to restore the original configurations.
     if [[ $modifications_in_progress == true ]]; then
-        echo "${C_WARN}Interrupt occurred during stage '$stage'; incomplete changes"
         echo "${C_INFO}Temporarily disabling UFW..."
         ufw disable
         echo "${C_INFO}Restoring previous UFW rules..."
@@ -139,7 +138,6 @@ fi
 ### Remove the existing Cloudflare IP ranges to allow new ones.
 ###
 
-stage=3
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
 sleep "$C_SLEEP_TIME"
 
