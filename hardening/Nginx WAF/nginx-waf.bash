@@ -6,7 +6,7 @@
 # Nginx to load the module, and sets up the OWASP Core Rule Set for basic protection against
 # common web vulnerabilities.
 #
-# Version: v1.0.0-beta
+# Version: v1.0.0-beta.3
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
 #
@@ -61,14 +61,6 @@ missing_pkgs=()
 ####[Functions]#############################################################################
 
 
-error_exit() {
-    local message="${1:-An unknown error occurred}"
-    local exit_code="${2:-1}"
-
-    echo "${C_ERROR}${message}" >&2
-    exit "$exit_code"
-}
-
 on_err() {
     local exit_code=$?
     error_exit "Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" "$exit_code"
@@ -102,7 +94,8 @@ trap on_err ERR
 
 
 if (( EUID != 0 )); then
-    error_exit "This script must be run with root privileges"
+    echo "${C_ERROR}This script must be run with root privileges"
+    exit 1
 fi
 
 if command -v nginx &>/dev/null; then
@@ -137,7 +130,7 @@ fi
 ####[ Main ]################################################################################
 
 
-echo "${C_INFO}Starting ModSecurity installation and configuration process..."
+read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
 
 ###
 ### [ Clone and build ModSecurity ]
@@ -282,7 +275,7 @@ sudo systemctl restart nginx
 echo "${C_SUCC}Finished installing and configuring ModSecurity WAF for Nginx"
 cat <<EOF
 ${C_NOTE}To enable ModSecurity WAF for a site, add these lines to its Nginx server block, for example in '/etc/nginx/sites-enabled/':
-${C_CYAN}## Modsecurity settings.
+${C_CYAN}## Modsecurity settings
 modsecurity on;
 modsecurity_rules_file /etc/nginx/modsec/main.conf;${C_NC}
 EOF
