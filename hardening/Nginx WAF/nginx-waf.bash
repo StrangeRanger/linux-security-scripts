@@ -279,4 +279,10 @@ sudo nginx -t
 echo "${C_INFO}Restarting Nginx to apply changes..."
 sudo systemctl restart nginx
 
-echo "${C_SUCC}DONE"
+echo "${C_SUCC}Finished installing and configuring ModSecurity WAF for Nginx"
+cat <<EOF
+${C_NOTE}To enable ModSecurity WAF for a site, add these lines to its Nginx server block, for example in '/etc/nginx/sites-enabled/':
+${C_CYAN}## Modsecurity settings.
+modsecurity on;
+modsecurity_rules_file /etc/nginx/modsec/main.conf;${C_NC}
+EOF
