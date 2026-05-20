@@ -203,20 +203,20 @@ make modules
 
 echo "${C_INFO}Installing ModSecurity Nginx module..."
 mkdir -p "$C_MODULES_PATH"
-sudo cp objs/"$C_SO_FILE" "$C_MODULES_PATH"
-sudo chmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
+cp objs/"$C_SO_FILE" "$C_MODULES_PATH"
+chmod 0644 "$C_MODULES_PATH/$C_SO_FILE"
 popd >/dev/null
 
 echo "${C_INFO}Setting up Nginx configuration for ModSecurity module..."
-sudo mkdir -p "$C_MODULES_AVAILABLE" "$C_MODULES_ENABLED"
+mkdir -p "$C_MODULES_AVAILABLE" "$C_MODULES_ENABLED"
 echo "load_module $C_MODULES_PATH/$C_SO_FILE;" \
-    | sudo tee "$C_MODULES_AVAILABLE/50-modsecurity.conf" >/dev/null
+    | tee "$C_MODULES_AVAILABLE/50-modsecurity.conf" >/dev/null
 
 if [[ -e $C_MODULES_ENABLED/50-modsecurity.conf ]]; then
     echo "${C_NOTE}ModSecurity module is already enabled"
 else
     echo "${C_INFO}Enabling ModSecurity module in Nginx..."
-    sudo ln -s "$C_MODULES_AVAILABLE/50-modsecurity.conf" "$C_MODULES_ENABLED/50-modsecurity.conf"
+    ln -s "$C_MODULES_AVAILABLE/50-modsecurity.conf" "$C_MODULES_ENABLED/50-modsecurity.conf"
 fi
 
 ###
@@ -225,18 +225,18 @@ fi
 
 echo "${C_INFO}Configuring ModSecurity rules..."
 pushd ModSecurity >/dev/null
-sudo mkdir -p "$C_MODSEC_PATH"
-sudo cp unicode.mapping "$C_MODSEC_PATH/"
-sudo cp modsecurity.conf-recommended "$C_MODSEC_CONF_PATH"
+mkdir -p "$C_MODSEC_PATH"
+cp unicode.mapping "$C_MODSEC_PATH/"
+cp modsecurity.conf-recommended "$C_MODSEC_CONF_PATH"
 
 echo "${C_INFO}Enabling ModSecurity in On mode..."
-sudo sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' "$C_MODSEC_CONF_PATH"
+sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' "$C_MODSEC_CONF_PATH"
 popd >/dev/null
 
 pushd "$C_MODSEC_PATH" >/dev/null
 if [[ ! -d coreruleset/.git ]]; then
     echo "${C_INFO}Cloning OWASP Core Rule Set repository..."
-    sudo git clone https://github.com/coreruleset/coreruleset.git
+    git clone https://github.com/coreruleset/coreruleset.git
 else
     echo "${C_NOTE}OWASP Core Rule Set repository already exists"
     coreruleset_clone_exists=true
@@ -249,15 +249,15 @@ if [[ $coreruleset_clone_exists == true ]]; then
     echo "${C_INFO}Updating existing OWASP Core Rule Set repository..."
     # TODO: Consider adding a check to ensure the local repository is on the correct branch
     # and there are no local changes before pulling.
-    sudo git pull
+    git pull
 fi
 
 echo "${C_INFO}Configuring OWASP Core Rule Set..."
-sudo cp crs-setup.conf.example crs-setup.conf
+cp crs-setup.conf.example crs-setup.conf
 popd >/dev/null
 
 echo "${C_INFO}Writing ModSecurity main configuration..."
-sudo tee "$C_MAIN_CONF_PATH" >/dev/null <<EOF
+tee "$C_MAIN_CONF_PATH" >/dev/null <<EOF
 Include $C_MODSEC_CONF_PATH
 Include $C_MODSEC_PATH/coreruleset/crs-setup.conf
 Include $C_MODSEC_PATH/coreruleset/rules/*.conf
@@ -268,9 +268,9 @@ EOF
 ###
 
 echo "${C_INFO}Testing Nginx configuration..."
-sudo nginx -t
+nginx -t
 echo "${C_INFO}Restarting Nginx to apply changes..."
-sudo systemctl restart nginx
+systemctl restart nginx
 
 echo "${C_SUCC}Finished installing and configuring ModSecurity WAF for Nginx"
 cat <<EOF
