@@ -116,6 +116,10 @@ fi
 
 read -rp "${C_NOTE}We will now install and configure ModSecurity. Press [Enter] to continue."
 
+###
+### [ Install Required Packages ]
+###
+
 for pkg in "${required_pkgs[@]}"; do
     if ! dpkg -s "$pkg" &>/dev/null; then
         missing_pkgs+=("$pkg")
