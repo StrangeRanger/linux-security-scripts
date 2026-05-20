@@ -118,8 +118,8 @@ done
 
 if (( ${#missing_pkgs[@]} > 0 )); then
     echo "${C_INFO}Installing missing packages: ${missing_pkgs[*]}"
-    sudo apt get update
-    sudo apt get install -y "${missing_pkgs[@]}"
+    sudo apt-get update
+    sudo apt-get install -y "${missing_pkgs[@]}"
 fi
 
 
