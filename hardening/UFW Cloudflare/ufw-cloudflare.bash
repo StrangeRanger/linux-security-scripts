@@ -134,12 +134,12 @@ if ! ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"; t
     clean_exit 1
 fi
 
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
+
 ###
 ### Remove the existing Cloudflare IP ranges to allow new ones.
 ###
-
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     echo "${C_INFO}Removing the existing Cloudflare IP ranges..."
@@ -162,6 +162,9 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
         yes | ufw delete "$rule_num"
     done
+
+    echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+    sleep "$C_SLEEP_TIME"
 fi
 
 unset current_cloudflare_rule_numbers
@@ -169,9 +172,6 @@ unset current_cloudflare_rule_numbers
 ###
 ### Add the new Cloudflare IP ranges.
 ###
-
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Adding the new Cloudflare IPv4 and IPv6 ranges..."
 for ip in "${new_cloudflare_ip_ranges[@]}"; do
@@ -183,12 +183,12 @@ for ip in "${new_cloudflare_ip_ranges[@]}"; do
     fi
 done
 
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
+
 ###
 ### Perform the last modifications to UFW.
 ###
-
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Removing temporary rules..."
 if ! ufw delete allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
@@ -198,7 +198,7 @@ fi
 
 modifications_in_progress=false
 
-sleep "$C_SLEEP_TIME"
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
 echo "${C_SUCC}Finished setting up UFW with Cloudflare IP ranges"
 clean_exit 0
