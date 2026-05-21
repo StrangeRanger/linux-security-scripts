@@ -88,7 +88,7 @@ clean_exit() {
 # shellcheck disable=SC2329,SC2317
 #   These appear to be false positives. The function is intended to be used in the 'ERR'
 #   trap handler, and the exit code is passed implicitly via the special variable '$?'.
-on_err() {
+on_error() {
     local exit_code=$?
 
     echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" >&2
@@ -102,7 +102,7 @@ on_err() {
 trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
-trap 'on_err' ERR
+trap 'on_error' ERR
 
 
 ####[ Prepping ]############################################################################
