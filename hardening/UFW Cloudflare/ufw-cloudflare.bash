@@ -2,7 +2,7 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.3
+# Version: v1.0.4
 # License: MIT License
 #          Copyright (c) 2024-2026 Hunter T. (StrangeRanger)
 #
@@ -88,7 +88,7 @@ clean_exit() {
 # shellcheck disable=SC2329,SC2317
 #   These appear to be false positives. The function is intended to be used in the 'ERR'
 #   trap handler, and the exit code is passed implicitly via the special variable '$?'.
-on_err() {
+on_error() {
     local exit_code=$?
 
     echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" >&2
@@ -102,7 +102,7 @@ on_err() {
 trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
-trap 'on_err' ERR
+trap 'on_error' ERR
 
 
 ####[ Prepping ]############################################################################
@@ -110,7 +110,7 @@ trap 'on_err' ERR
 
 if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
-    exit 1
+    clean_exit 1
 fi
 
 
