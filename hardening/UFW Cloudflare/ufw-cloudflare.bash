@@ -117,7 +117,7 @@ read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to 
 echo "${C_INFO}Checking UFW status..."
 if ! ufw status | grep -q '^Status: active$'; then
     echo "${C_ERROR}UFW is not active"
-    exit 1
+    clean_exit 1
 fi
 
 ###
