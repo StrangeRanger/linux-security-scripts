@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Replace the `yes | ufw delete` pipeline with a single `y` response to avoid `SIGPIPE` failures under `pipefail`.
+- Use the `-z` flag when restoring archived backup files to handle gzip-compressed tar archives correctly.
 
 ## v1.0.2 - 2026-05-20
 
