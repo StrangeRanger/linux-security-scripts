@@ -48,6 +48,9 @@ modifications_in_progress=false
 clean_exit() {
     local exit_code="$1"
 
+    trap - ERR
+    set +e
+
     case "$exit_code" in
         0|1) echo "" ;;
         129) echo -e "\n\n${C_WARN}Hangup signal detected (SIGHUP)" ;;
