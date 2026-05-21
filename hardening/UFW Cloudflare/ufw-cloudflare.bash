@@ -82,6 +82,7 @@ clean_exit() {
     exit "$exit_code"
 }
 
+# shellcheck disable=SC2329
 on_err() {
     local exit_code=$?
 
