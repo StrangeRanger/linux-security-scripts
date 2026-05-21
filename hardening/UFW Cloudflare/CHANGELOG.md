@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fix duplicate "Waiting X second for changes to take effect" when no existing cloudflare rules are present.
+- Fix duplicate "Waiting X second for changes to take effect" when no existing Cloudflare rules are present.
 
 ## v1.0.1 - 2025-08-10
 
