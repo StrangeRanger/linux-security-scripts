@@ -85,7 +85,9 @@ clean_exit() {
     exit "$exit_code"
 }
 
-# shellcheck disable=SC2329
+# shellcheck disable=SC2329,SC2317
+#   These appear to be false positives. The function is intended to be used in the 'ERR'
+#   trap handler, and the exit code is passed implicitly via the special variable '$?'.
 on_err() {
     local exit_code=$?
 
