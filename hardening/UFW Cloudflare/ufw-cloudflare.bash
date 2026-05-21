@@ -2,11 +2,12 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.1
+# Version: v1.0.3
 # License: MIT License
 #          Copyright (c) 2024-2026 Hunter T. (StrangeRanger)
 #
 ############################################################################################
+set -euo pipefail
 ####[ Global Variables ]####################################################################
 
 
@@ -27,28 +28,28 @@ readonly C_RED=$'\033[1;31m'
 readonly C_NC=$'\033[0m'
 
 readonly C_ERROR="${C_RED}ERROR:${C_NC} "
-readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_WARN="${C_YELLOW}==>${C_NC} "
+readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
 current_cloudflare_rule_numbers=()
 current_cloudflare_ip_ranges=()
 new_cloudflare_ip_ranges=()
-stage=0
+modifications_in_progress=false
 
 
 ####[ Function ]############################################################################
 
 
 ####
-# Cleanly exit the script by removing temporary files, restoring backups if needed, and
-# displaying a message based on the exit code.
-#
-# PARAMETERS:
-#   - $1: exit_code (Required)
+# Remove temporary files, restore backups if needed, and display a message based on the exit
+# code.
 clean_exit() {
     local exit_code="$1"
+
+    trap - ERR
+    set +e
 
     case "$exit_code" in
         0|1) echo "" ;;
@@ -58,21 +59,22 @@ clean_exit() {
         *)   echo -e "\n\n${C_WARN}Exiting with code: $exit_code" ;;
     esac
 
-    case $stage in
-        2|3|4)
-            echo "${C_WARN}Interrupt occurred during stage '$stage'; incomplete changes"
-            echo "${C_INFO}Temporarily disabling UFW..."
-            ufw disable
-            echo "${C_INFO}Restoring previous UFW rules..."
-            sudo tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
-            echo "${C_INFO}Re-enabling UFW..."
-            ufw enable
-            echo "${C_INFO}Displaying current UFW status..."
-            echo "---"
-            ufw status verbose
-            echo "---"
-            ;;
-    esac
+    # Check if we need to restore the original configurations.
+    if [[ $modifications_in_progress == true ]]; then
+        echo "${C_INFO}Temporarily disabling UFW..."
+        ufw disable
+
+        echo "${C_INFO}Restoring previous UFW rules..."
+        tar -C /etc -xzf "$C_UFW_BACKUP_ARCHIVE"
+
+        echo "${C_INFO}Re-enabling UFW..."
+        ufw enable
+
+        echo "${C_INFO}Displaying current UFW status..."
+        echo "---"
+        ufw status verbose
+        echo "---"
+    fi
 
     if [[ -d "$C_TMP_DIR" ]]; then
         echo "${C_INFO}Cleaning up..."
@@ -83,6 +85,16 @@ clean_exit() {
     exit "$exit_code"
 }
 
+# shellcheck disable=SC2329,SC2317
+#   These appear to be false positives. The function is intended to be used in the 'ERR'
+#   trap handler, and the exit code is passed implicitly via the special variable '$?'.
+on_err() {
+    local exit_code=$?
+
+    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" >&2
+    clean_exit "$exit_code"
+}
+
 
 ####[ Trapping Logic ]######################################################################
 
@@ -90,6 +102,7 @@ clean_exit() {
 trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
+trap 'on_err' ERR
 
 
 ####[ Prepping ]############################################################################
@@ -106,17 +119,21 @@ fi
 
 read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to continue."
 
+echo "${C_INFO}Checking UFW status..."
+if ! ufw status | grep -q '^Status: active$'; then
+    echo "${C_ERROR}UFW is not active"
+    clean_exit 1
+fi
+
 ###
 ### [ Initial Setup ]
 ###
-
-stage=1
 
 echo "${C_INFO}Retrieving current Cloudflare IP rules from UFW..."
 while IFS= read -r line; do
     read -ra fields <<< "$line"
     current_cloudflare_ip_ranges+=("${fields[2]}")
-done < <(sudo ufw status | grep "Cloudflare IP")
+done < <(ufw status | grep "$C_CLOUDFLARE_UFW_COMMENT")
 unset fields
 
 echo "${C_INFO}Retrieving new Cloudflare IP ranges..."
@@ -127,13 +144,13 @@ mapfile -t new_cloudflare_ip_ranges < <(
 )
 
 echo "${C_INFO}Creating UFW backup archive at: $C_UFW_BACKUP_ARCHIVE"
-tar -C /etc -cf "$C_UFW_BACKUP_ARCHIVE" ufw
+tar -C /etc -czf "$C_UFW_BACKUP_ARCHIVE" ufw
 
 ###
 ### Add temporary rule to prevent traffic disruption.
 ###
 
-stage=2
+modifications_in_progress=true
 
 echo "${C_INFO}Temporarily opening ports 80 and 443 from any IP address..."
 if ! ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
@@ -141,13 +158,12 @@ if ! ufw allow from any to any port 80,443 proto tcp comment "Temporary rule"; t
     clean_exit 1
 fi
 
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
+
 ###
 ### Remove the existing Cloudflare IP ranges to allow new ones.
 ###
-
-stage=3
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     echo "${C_INFO}Removing the existing Cloudflare IP ranges..."
@@ -168,8 +184,11 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     )
 
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
-        yes | ufw delete "$rule_num"
+        echo "y" | ufw delete "$rule_num"
     done
+
+    echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+    sleep "$C_SLEEP_TIME"
 fi
 
 unset current_cloudflare_rule_numbers
@@ -177,10 +196,6 @@ unset current_cloudflare_rule_numbers
 ###
 ### Add the new Cloudflare IP ranges.
 ###
-
-stage=4
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Adding the new Cloudflare IPv4 and IPv6 ranges..."
 for ip in "${new_cloudflare_ip_ranges[@]}"; do
@@ -192,13 +207,12 @@ for ip in "${new_cloudflare_ip_ranges[@]}"; do
     fi
 done
 
+echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
+
 ###
 ### Perform the last modifications to UFW.
 ###
-
-stage=5
-echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
-sleep "$C_SLEEP_TIME"
 
 echo "${C_INFO}Removing temporary rules..."
 if ! ufw delete allow from any to any port 80,443 proto tcp comment "Temporary rule"; then
@@ -206,7 +220,9 @@ if ! ufw delete allow from any to any port 80,443 proto tcp comment "Temporary r
     echo "${C_NOTE}Please check your UFW configuration and remove it manually"
 fi
 
-sleep "$C_SLEEP_TIME"
+modifications_in_progress=false
+
 echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
+sleep "$C_SLEEP_TIME"
 echo "${C_SUCC}Finished setting up UFW with Cloudflare IP ranges"
 clean_exit 0
