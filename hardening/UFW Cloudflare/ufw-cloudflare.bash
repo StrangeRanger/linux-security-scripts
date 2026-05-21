@@ -2,11 +2,12 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.2
+# Version: v1.0.3
 # License: MIT License
 #          Copyright (c) 2024-2026 Hunter T. (StrangeRanger)
 #
 ############################################################################################
+set -euo pipefail
 ####[ Global Variables ]####################################################################
 
 
@@ -27,8 +28,8 @@ readonly C_RED=$'\033[1;31m'
 readonly C_NC=$'\033[0m'
 
 readonly C_ERROR="${C_RED}ERROR:${C_NC} "
-readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_WARN="${C_YELLOW}==>${C_NC} "
+readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
@@ -59,10 +60,13 @@ clean_exit() {
     if [[ $modifications_in_progress == true ]]; then
         echo "${C_INFO}Temporarily disabling UFW..."
         ufw disable
+
         echo "${C_INFO}Restoring previous UFW rules..."
         sudo tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
+
         echo "${C_INFO}Re-enabling UFW..."
         ufw enable
+
         echo "${C_INFO}Displaying current UFW status..."
         echo "---"
         ufw status verbose
@@ -78,6 +82,13 @@ clean_exit() {
     exit "$exit_code"
 }
 
+on_err() {
+    local exit_code=$?
+
+    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" >&2
+    clean_exit "$exit_code"
+}
+
 
 ####[ Trapping Logic ]######################################################################
 
@@ -85,6 +96,7 @@ clean_exit() {
 trap 'clean_exit 129' SIGHUP
 trap 'clean_exit 130' SIGINT
 trap 'clean_exit 143' SIGTERM
+trap 'on_err' ERR
 
 
 ####[ Prepping ]############################################################################
@@ -101,6 +113,12 @@ fi
 
 read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to continue."
 
+echo "${C_INFO}Checking UFW status..."
+if ! ufw status | grep -q '^Status: active$'; then
+    echo "${C_ERROR}UFW is not active"
+    exit 1
+fi
+
 ###
 ### [ Initial Setup ]
 ###
@@ -109,7 +127,7 @@ echo "${C_INFO}Retrieving current Cloudflare IP rules from UFW..."
 while IFS= read -r line; do
     read -ra fields <<< "$line"
     current_cloudflare_ip_ranges+=("${fields[2]}")
-done < <(sudo ufw status | grep "Cloudflare IP")
+done < <(ufw status | grep "$C_CLOUDFLARE_UFW_COMMENT")
 unset fields
 
 echo "${C_INFO}Retrieving new Cloudflare IP ranges..."
@@ -120,7 +138,7 @@ mapfile -t new_cloudflare_ip_ranges < <(
 )
 
 echo "${C_INFO}Creating UFW backup archive at: $C_UFW_BACKUP_ARCHIVE"
-tar -C /etc -cf "$C_UFW_BACKUP_ARCHIVE" ufw
+tar -C /etc -czf "$C_UFW_BACKUP_ARCHIVE" ufw
 
 ###
 ### Add temporary rule to prevent traffic disruption.
@@ -160,7 +178,7 @@ if (( ${#current_cloudflare_ip_ranges[@]} != 0 )); then
     )
 
     for rule_num in "${current_cloudflare_rule_numbers[@]}"; do
-        yes | ufw delete "$rule_num"
+        echo "y" | ufw delete "$rule_num"
     done
 
     echo "${C_NOTE}Waiting '$C_SLEEP_TIME' second for changes to take effect..."
