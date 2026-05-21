@@ -110,7 +110,7 @@ trap 'on_error' ERR
 
 if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
-    exit 1
+    clean_exit 1
 fi
 
 
