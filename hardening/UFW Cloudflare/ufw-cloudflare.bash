@@ -62,7 +62,7 @@ clean_exit() {
         ufw disable
 
         echo "${C_INFO}Restoring previous UFW rules..."
-        sudo tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
+        tar -C /etc -xf "$C_UFW_BACKUP_ARCHIVE"
 
         echo "${C_INFO}Re-enabling UFW..."
         ufw enable
