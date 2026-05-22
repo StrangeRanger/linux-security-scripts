@@ -85,6 +85,9 @@ clean_exit() {
     exit "$exit_code"
 }
 
+####
+# Print the error message, the line number, and the command that caused the error.
+#
 # shellcheck disable=SC2329,SC2317
 #   These appear to be false positives. The function is intended to be used in the 'ERR'
 #   trap handler, and the exit code is passed implicitly via the special variable '$?'.
