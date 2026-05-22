@@ -89,6 +89,7 @@ modifications_in_progress=false
 # code.
 clean_exit() {
     local exit_code="$1"
+    local clean_up=true
 
     case "$exit_code" in
         0|1) echo "" ;;
@@ -107,12 +108,15 @@ clean_exit() {
             echo "${C_INFO}Cleaning up..."
             [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
         else
+            clean_up=false
             echo "${C_ERROR}Failed to restore 'sshd_config'" >&2
             echo "${C_NOTE}Session backup is available at: $C_SESSION_BACKUP"
             echo "${C_NOTE}Permanent backup is available at: $C_CONFIG_FILE_BAK"
             echo "${C_NOTE}Temp directory preserved for manual recovery: $C_TMP_DIR"
         fi
-    else
+    fi
+
+    if [[ $clean_up == true ]]; then
         echo "${C_INFO}Cleaning up..."
         [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
     fi
