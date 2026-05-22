@@ -207,8 +207,8 @@ for key in "${!C_SSHD_CONFIG[@]}"; do
 
     regex_key="${key}Regex"
     sed_regex="0,/${C_SSHD_CONFIG[$regex_key]}/s/${C_SSHD_CONFIG[$regex_key]}/${key} ${C_SSHD_CONFIG[$key]}/"
-    echo "${C_INFO}Checking '${key}'..."
 
+    echo "${C_INFO}Checking '${key}'..."
     ## Check if the key is already set to the desired value.
     if grep -Eq "^${key} ${C_SSHD_CONFIG[$key]}$" "$C_CONFIG_FILE"; then
         echo "${C_NOTE}${key} already set to '${C_SSHD_CONFIG[$key]}'"
