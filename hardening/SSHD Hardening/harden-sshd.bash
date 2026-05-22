@@ -85,11 +85,8 @@ modifications_in_progress=false
 
 
 ####
-# Cleanly exit the script by removing temporary files, restoring backups if needed, and
-# displaying a message based on the exit code.
-#
-# PARAMETERS:
-#   - $1: exit_code (Required)
+# Remove temporary files, restore backups if needed, and display a message based on the exit
+# code.
 clean_exit() {
     local exit_code="$1"
 
@@ -139,14 +136,14 @@ trap 'clean_exit 143' SIGTERM
 ## Check if the script was executed with root privilege.
 if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
-    exit 1
+    clean_exit 1
 fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $C_CONFIG_FILE ]]; then
     echo "${C_WARN}'sshd_config' doesn't exist" >&2
     echo "${C_NOTE}openssh-server may not be installed"
-    exit 1
+    clean_exit 1
 fi
 
 
@@ -167,9 +164,9 @@ if [[ -f $C_CONFIG_FILE_BAK ]]; then
     case "$choice" in
         y*)
             echo "${C_INFO}Overwriting backup of 'sshd_config'..."
-            cp $C_CONFIG_FILE $C_CONFIG_FILE_BAK || {
+            cp "$C_CONFIG_FILE" "$C_CONFIG_FILE_BAK" || {
                 echo "${C_ERROR}Failed to overwrite backup of 'sshd_config'" >&2
-                exit 1
+                clean_exit 1
             }
             ;;
         *)
@@ -182,8 +179,7 @@ else
     echo "${C_INFO}Backing up 'sshd_config'..."
     cp "$C_CONFIG_FILE" "$C_CONFIG_FILE_BAK" || {
         echo "${C_ERROR}Failed to back up sshd_config" >&2
-        echo "${C_NOTE}Create a backup of the original 'sshd_config' file before continuing"
-        exit 1
+        clean_exit 1
     }
 fi
 
