@@ -111,7 +111,7 @@ trap on_error ERR
 if command -v nginx &>/dev/null; then
     C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
     C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
-    C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<<"$C_NGINX_CONFIG_ARGS" | head -n 1)"
+    C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<< "$C_NGINX_CONFIG_ARGS" | head -n 1)"
     is_not_empty C_NGINX_VERSION || exit 1
     is_not_empty C_NGINX_CONFIG_ARGS || exit 1
     is_not_empty C_MODULES_PATH || exit 1
