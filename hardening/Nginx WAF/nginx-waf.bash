@@ -115,6 +115,7 @@ if command -v nginx &>/dev/null; then
     is_not_empty C_NGINX_VERSION || exit 1
     is_not_empty C_NGINX_CONFIG_ARGS || exit 1
     is_not_empty C_MODULES_PATH || exit 1
+    readonly C_NGINX_VERSION C_NGINX_CONFIG_ARGS C_MODULES_PATH
 else
     echo "${C_ERROR}Nginx is not installed or not in PATH" >&2
     exit 1
@@ -154,13 +155,10 @@ fi
 if [[ ! -d "ModSecurity/.git" ]]; then
     echo "${C_INFO}Cloning ModSecurity repository..."
     git clone --depth 1 -b v3/master --single-branch https://github.com/owasp-modsecurity/ModSecurity
+    pushd ModSecurity >/dev/null
 else
     echo "${C_NOTE}ModSecurity repository already exists"
-    modsecurity_clone_exists=true
-fi
-
-pushd ModSecurity >/dev/null
-if [[ $modsecurity_clone_exists == true ]]; then
+    pushd ModSecurity >/dev/null
     echo "${C_INFO}Updating existing ModSecurity repository..."
     # TODO: Consider adding a check to ensure the local repository is on the correct branch
     # and there are no local changes before pulling.
@@ -198,6 +196,8 @@ else
     git pull
     popd >/dev/null
 fi
+
+# TODO: Delete existing nginx source directory if it exists? Maybe a cleanup?
 
 echo "${C_INFO}Downloading Nginx source code for version '${C_NGINX_VERSION}'..."
 [[ -f "nginx-${C_NGINX_VERSION}.tar.gz" ]] && rm -f "nginx-${C_NGINX_VERSION}.tar.gz"
