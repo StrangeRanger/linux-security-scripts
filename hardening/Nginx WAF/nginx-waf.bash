@@ -77,7 +77,7 @@ on_error() {
 }
 
 ####
-# Check if a variable is empty. If it is empty, print an error message and exit with
+# Check if a variable is empty. If it is empty, print an error message and return with
 # code 1.
 is_not_empty() {
     local var_name="$1"
