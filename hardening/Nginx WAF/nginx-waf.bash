@@ -6,7 +6,7 @@
 # Nginx to load the module, and sets up the OWASP Core Rule Set for basic protection against
 # common web vulnerabilities.
 #
-# Version: v1.0.0-beta.3
+# Version: v1.0.0-beta.4
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
 #
