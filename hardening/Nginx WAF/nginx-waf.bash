@@ -10,6 +10,11 @@
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
 #
+# TODO: Delete existing nginx source directory if it exists? Maybe a cleanup?
+# TODO: Go through and verify 'sudo' is only used where necessary.
+# TODO: Go through and ensure proper ownership and permissions of create, copied, and
+#   modified files.
+#
 ############################################################################################
 set -Eeuo pipefail
 ####[ Global Variables ]####################################################################
@@ -52,7 +57,6 @@ C_NGINX_VERSION=""
 C_NGINX_CONFIG_ARGS=""
 C_MODULES_PATH=""
 
-modsecurity_clone_exists=false
 coreruleset_clone_exists=false
 required_pkgs=("${C_REQUIRED_PKGS[@]}")
 missing_pkgs=()
@@ -196,8 +200,6 @@ else
     git pull
     popd >/dev/null
 fi
-
-# TODO: Delete existing nginx source directory if it exists? Maybe a cleanup?
 
 echo "${C_INFO}Downloading Nginx source code for version '${C_NGINX_VERSION}'..."
 [[ -f "nginx-${C_NGINX_VERSION}.tar.gz" ]] && rm -f "nginx-${C_NGINX_VERSION}.tar.gz"
