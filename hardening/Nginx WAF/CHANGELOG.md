@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0-beta.4 - 2026-05-24
+
+### Changed
+
+- Refactored error handling and required-value validation to report failures to stderr and preserve the original exit code.
+- Simplified ModSecurity repository setup by removing the separate clone-state flag.
+- Marked detected Nginx version, configure arguments, and modules path as readonly after validation.
+- Raised the Bash requirement to 4.3 or newer.
+
 ## v1.0.0-beta.3 - 2026-05-20
 
 ### Added

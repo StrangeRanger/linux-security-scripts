@@ -2,7 +2,7 @@
 #
 # Set up UFW to only allow HTTP and HTTPS traffic from Cloudflare's IP ranges.
 #
-# Version: v1.0.4
+# Version: v1.0.5
 # License: MIT License
 #          Copyright (c) 2024-2026 Hunter T. (StrangeRanger)
 #
@@ -85,9 +85,11 @@ clean_exit() {
     exit "$exit_code"
 }
 
+####
+# Print the error message, the line number, and the command that caused the error.
+#
 # shellcheck disable=SC2329,SC2317
-#   These appear to be false positives. The function is intended to be used in the 'ERR'
-#   trap handler, and the exit code is passed implicitly via the special variable '$?'.
+#   on_error is invoked indirectly by the ERR trap.
 on_error() {
     local exit_code=$?
 
@@ -121,7 +123,7 @@ read -rp "${C_NOTE}We will now configure Cloudflare UFW rules. Press [Enter] to 
 
 echo "${C_INFO}Checking UFW status..."
 if ! ufw status | grep -q '^Status: active$'; then
-    echo "${C_ERROR}UFW is not active"
+    echo "${C_ERROR}UFW is not active" >&2
     clean_exit 1
 fi
 

@@ -9,7 +9,7 @@
 #       - Session backup (.session_backup): For automatic script restoration during
 #         interruptions.
 #
-# Version: v2.2.0
+# Version: v2.2.1
 # License: MIT License
 #          Copyright (c) 2020-2026 Hunter T. (StrangeRanger)
 #
@@ -85,13 +85,11 @@ modifications_in_progress=false
 
 
 ####
-# Cleanly exit the script by removing temporary files, restoring backups if needed, and
-# displaying a message based on the exit code.
-#
-# PARAMETERS:
-#   - $1: exit_code (Required)
+# Remove temporary files, restore backups if needed, and display a message based on the exit
+# code.
 clean_exit() {
     local exit_code="$1"
+    local clean_up=true
 
     case "$exit_code" in
         0|1) echo "" ;;
@@ -107,15 +105,16 @@ clean_exit() {
         echo "${C_INFO}Restoring original 'sshd_config'..."
         if cp "$C_SESSION_BACKUP" "$C_CONFIG_FILE"; then
             echo "${C_SUCC}Successfully restored original configurations"
-            echo "${C_INFO}Cleaning up..."
-            [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
         else
+            clean_up=false
             echo "${C_ERROR}Failed to restore 'sshd_config'" >&2
             echo "${C_NOTE}Session backup is available at: $C_SESSION_BACKUP"
             echo "${C_NOTE}Permanent backup is available at: $C_CONFIG_FILE_BAK"
             echo "${C_NOTE}Temp directory preserved for manual recovery: $C_TMP_DIR"
         fi
-    else
+    fi
+
+    if [[ $clean_up == true ]]; then
         echo "${C_INFO}Cleaning up..."
         [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
     fi
@@ -139,14 +138,14 @@ trap 'clean_exit 143' SIGTERM
 ## Check if the script was executed with root privilege.
 if (( EUID != 0 )); then
     echo "${C_ERROR}This script requires root privilege" >&2
-    exit 1
+    clean_exit 1
 fi
 
 ## Confirm that 'sshd_config' exists.
 if [[ ! -f $C_CONFIG_FILE ]]; then
     echo "${C_WARN}'sshd_config' doesn't exist" >&2
     echo "${C_NOTE}openssh-server may not be installed"
-    exit 1
+    clean_exit 1
 fi
 
 
@@ -167,9 +166,9 @@ if [[ -f $C_CONFIG_FILE_BAK ]]; then
     case "$choice" in
         y*)
             echo "${C_INFO}Overwriting backup of 'sshd_config'..."
-            cp $C_CONFIG_FILE $C_CONFIG_FILE_BAK || {
+            cp "$C_CONFIG_FILE" "$C_CONFIG_FILE_BAK" || {
                 echo "${C_ERROR}Failed to overwrite backup of 'sshd_config'" >&2
-                exit 1
+                clean_exit 1
             }
             ;;
         *)
@@ -182,8 +181,7 @@ else
     echo "${C_INFO}Backing up 'sshd_config'..."
     cp "$C_CONFIG_FILE" "$C_CONFIG_FILE_BAK" || {
         echo "${C_ERROR}Failed to back up sshd_config" >&2
-        echo "${C_NOTE}Create a backup of the original 'sshd_config' file before continuing"
-        exit 1
+        clean_exit 1
     }
 fi
 
@@ -207,8 +205,8 @@ for key in "${!C_SSHD_CONFIG[@]}"; do
 
     regex_key="${key}Regex"
     sed_regex="0,/${C_SSHD_CONFIG[$regex_key]}/s/${C_SSHD_CONFIG[$regex_key]}/${key} ${C_SSHD_CONFIG[$key]}/"
-    echo "${C_INFO}Checking '${key}'..."
 
+    echo "${C_INFO}Checking '${key}'..."
     ## Check if the key is already set to the desired value.
     if grep -Eq "^${key} ${C_SSHD_CONFIG[$key]}$" "$C_CONFIG_FILE"; then
         echo "${C_NOTE}${key} already set to '${C_SSHD_CONFIG[$key]}'"

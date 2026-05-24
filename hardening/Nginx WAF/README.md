@@ -7,7 +7,7 @@ Installs and configures ModSecurity with the OWASP Core Rule Set for Nginx.
 
 ## Requirements
 
-- Bash 4.0 or newer
+- Bash 4.3 or newer
 - Root privileges
 - Nginx 1.24.0 or newer, installed and available in `PATH`
 - A Debian/Ubuntu-style system with `apt-get` and `dpkg`

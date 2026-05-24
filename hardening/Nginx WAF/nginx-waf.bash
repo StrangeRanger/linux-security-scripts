@@ -6,9 +6,14 @@
 # Nginx to load the module, and sets up the OWASP Core Rule Set for basic protection against
 # common web vulnerabilities.
 #
-# Version: v1.0.0-beta.3
+# Version: v1.0.0-beta.4
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
+#
+# TODO: Delete existing nginx source directory if it exists? Maybe a cleanup?
+# TODO: Go through and verify 'sudo' is only used where necessary.
+# TODO: Go through and ensure proper ownership and permissions of create, copied, and
+#   modified files.
 #
 ############################################################################################
 set -Eeuo pipefail
@@ -52,7 +57,6 @@ C_NGINX_VERSION=""
 C_NGINX_CONFIG_ARGS=""
 C_MODULES_PATH=""
 
-modsecurity_clone_exists=false
 coreruleset_clone_exists=false
 required_pkgs=("${C_REQUIRED_PKGS[@]}")
 missing_pkgs=()
@@ -61,24 +65,38 @@ missing_pkgs=()
 ####[Functions]#############################################################################
 
 
-on_err() {
+####
+# Print an error message and exit with the triggering command’s status.
+#
+# NOTE: This function is intended to be used in the 'on_error' trap handler.
+on_error() {
     local exit_code=$?
-    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"
-    echo "${C_ERROR}Exit code: $exit_code"
+
+    echo "${C_ERROR}Command failed at line ${BASH_LINENO[0]}: ${BASH_COMMAND}" >&2
+    exit "$exit_code"
 }
 
-require_non_empty() {
+####
+# Check if a variable is empty. If it is empty, print an error message and return with
+# code 1.
+is_not_empty() {
     local var_name="$1"
-    local var_value="${2:-}"
+    local -n var_ref="$1"
 
-    [[ -n "$var_value" ]] || error_exit "Required value '${var_name}' is empty"
+    if [[ -z "$var_ref" ]]; then
+        echo "${C_ERROR}Required value '${var_name}' is empty" >&2
+        return 1
+    fi
 }
 
+####
+# Add additional packages to the list of required packages if certain Nginx modules are
+# enabled.
 require_pkg() {
     local required_pkg="$1"
 
     for pkg in "${required_pkgs[@]}"; do
-        [[ $pkg == "$required_pkg" ]] && return 0
+        [[ $pkg == "$required_pkg" ]] && return
     done
 
     required_pkgs+=("$required_pkg")
@@ -88,7 +106,7 @@ require_pkg() {
 ####[ Trapping & Initial Checks ]###########################################################
 
 
-trap on_err ERR
+trap on_error ERR
 
 
 ####[ Initial Checks ]######################################################################
@@ -97,12 +115,14 @@ trap on_err ERR
 if command -v nginx &>/dev/null; then
     C_NGINX_VERSION="$(nginx -V 2>&1 | sed -n 's/^nginx version: nginx\/\([0-9.]\+\).*/\1/p')"
     C_NGINX_CONFIG_ARGS="$(nginx -V 2>&1 | awk -F': ' '/configure arguments/ {print $2}')"
-    C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<<"$C_NGINX_CONFIG_ARGS" | head -n 1)"
-    require_non_empty "C_NGINX_VERSION" "$C_NGINX_VERSION"
-    require_non_empty "C_NGINX_CONFIG_ARGS" "$C_NGINX_CONFIG_ARGS"
-    require_non_empty "C_MODULES_PATH" "$C_MODULES_PATH"
+    C_MODULES_PATH="$(sed -n 's/.*--modules-path=\([^ ]*\).*/\1/p' <<< "$C_NGINX_CONFIG_ARGS" | head -n 1)"
+    is_not_empty C_NGINX_VERSION || exit 1
+    is_not_empty C_NGINX_CONFIG_ARGS || exit 1
+    is_not_empty C_MODULES_PATH || exit 1
+    readonly C_NGINX_VERSION C_NGINX_CONFIG_ARGS C_MODULES_PATH
 else
-    error_exit "Nginx is not installed or not in PATH"
+    echo "${C_ERROR}Nginx is not installed or not in PATH" >&2
+    exit 1
 fi
 
 [[ $C_NGINX_CONFIG_ARGS == *--with-http_image_filter_module* ]] && require_pkg "libgd-dev"
@@ -139,13 +159,10 @@ fi
 if [[ ! -d "ModSecurity/.git" ]]; then
     echo "${C_INFO}Cloning ModSecurity repository..."
     git clone --depth 1 -b v3/master --single-branch https://github.com/owasp-modsecurity/ModSecurity
+    pushd ModSecurity >/dev/null
 else
     echo "${C_NOTE}ModSecurity repository already exists"
-    modsecurity_clone_exists=true
-fi
-
-pushd ModSecurity >/dev/null
-if [[ $modsecurity_clone_exists == true ]]; then
+    pushd ModSecurity >/dev/null
     echo "${C_INFO}Updating existing ModSecurity repository..."
     # TODO: Consider adding a check to ensure the local repository is on the correct branch
     # and there are no local changes before pulling.
