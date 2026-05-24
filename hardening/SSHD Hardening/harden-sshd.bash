@@ -105,8 +105,6 @@ clean_exit() {
         echo "${C_INFO}Restoring original 'sshd_config'..."
         if cp "$C_SESSION_BACKUP" "$C_CONFIG_FILE"; then
             echo "${C_SUCC}Successfully restored original configurations"
-            echo "${C_INFO}Cleaning up..."
-            [[ -d "$C_TMP_DIR" ]] && rm -rf "$C_TMP_DIR"
         else
             clean_up=false
             echo "${C_ERROR}Failed to restore 'sshd_config'" >&2
