@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Replaced the use of `exit 1` with `clean_exit 1` to ensure temp files are removed on exits.
+- Print the inactive UFW error message to stderr.
 
 ## v1.0.3 - 2026-05-21
 
