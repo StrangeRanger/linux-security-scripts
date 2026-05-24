@@ -66,7 +66,7 @@ missing_pkgs=()
 
 
 ####
-# Print an error message and exit with the provided exit code.
+# Print an error message and exit with the triggering command’s status.
 #
 # NOTE: This function is intended to be used in the 'on_error' trap handler.
 on_error() {
