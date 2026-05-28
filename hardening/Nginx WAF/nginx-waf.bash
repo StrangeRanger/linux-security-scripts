@@ -81,7 +81,7 @@ on_error() {
 # code 1.
 is_not_empty() {
     local var_name="$1"
-    local -n var_ref="$1"
+    local -n var_ref="$1"  # Use nameref to reference the variable by name.
 
     if [[ -z "$var_ref" ]]; then
         echo "${C_ERROR}Required value '${var_name}' is empty" >&2
