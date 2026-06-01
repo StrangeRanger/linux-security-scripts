@@ -92,6 +92,9 @@ is_not_empty() {
 ####
 # Add additional packages to the list of required packages if certain Nginx modules are
 # enabled.
+#
+# MODIFIED GLOBALS:
+#   - required_pkgs: Appends the package name when it is not already present.
 require_pkg() {
     local required_pkg="$1"
 
