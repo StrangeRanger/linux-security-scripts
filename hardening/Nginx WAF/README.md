@@ -1,8 +1,5 @@
 # Nginx WAF
 
-> [!CAUTION]
-> Script is currently in beta.
-
 Installs and configures ModSecurity with the OWASP Core Rule Set for Nginx.
 
 ## Requirements
