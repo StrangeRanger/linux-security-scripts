@@ -6,14 +6,9 @@
 # Nginx to load the module, and sets up the OWASP Core Rule Set for basic protection against
 # common web vulnerabilities.
 #
-# Version: v1.0.0-beta.4
+# Version: v1.0.0
 # License: MIT License
 #          Copyright (c) 2026 Hunter T. (StrangeRanger)
-#
-# TODO: Delete existing nginx source directory if it exists? Maybe a cleanup?
-# TODO: Go through and verify 'sudo' is only used where necessary.
-# TODO: Go through and ensure proper ownership and permissions of create, copied, and
-#   modified files.
 #
 ############################################################################################
 set -Eeuo pipefail
@@ -53,10 +48,6 @@ readonly C_REQUIRED_PKGS=(
     zlib1g-dev
 )
 
-C_NGINX_VERSION=""
-C_NGINX_CONFIG_ARGS=""
-C_MODULES_PATH=""
-
 coreruleset_clone_exists=false
 required_pkgs=("${C_REQUIRED_PKGS[@]}")
 missing_pkgs=()
@@ -79,6 +70,9 @@ on_error() {
 ####
 # Check if a variable is empty. If it is empty, print an error message and return with
 # code 1.
+#
+# PARAMETERS:
+#   $1 - var_name (Required)
 is_not_empty() {
     local var_name="$1"
     local -n var_ref="$1"  # Use nameref to reference the variable by name.
@@ -95,6 +89,9 @@ is_not_empty() {
 #
 # MODIFIED GLOBALS:
 #   - required_pkgs: Appends the package name when it is not already present.
+#
+# PARAMETERS:
+#   $1 - required_pkg (Required)
 require_pkg() {
     local required_pkg="$1"
 
@@ -105,14 +102,51 @@ require_pkg() {
     required_pkgs+=("$required_pkg")
 }
 
+####
+# Confirm with the user before performing a 'git pull' in a repository that has local
+# changes.
+#
+# PARAMETERS:
+#   $1 - repo_path (Optional, default: current directory)
+#   $2 - use_sudo (Optional, default: false)
+confirm_git_pull() {
+    local repo_path="${1:-.}"
+    local use_sudo="${2:-false}"
+    local sudo_cmd=()
+
+    if [[ $use_sudo == "true" ]]; then
+        sudo_cmd=(sudo)
+    fi
+
+    pushd "$repo_path" >/dev/null
+
+    if [[ -n $("${sudo_cmd[@]}" git status --porcelain) ]]; then
+        echo "${C_NOTE}Local changes detected in '$repo_path'"
+        "${sudo_cmd[@]}" git status --short
+
+        printf "%sPull anyway? This may fail or require conflict resolution. " "$C_NOTE"
+        read -rp "[y/N] " reply
+
+        case "$reply" in
+            [Yy]*) ;;
+            *)
+                echo "${C_NOTE}Skipping pull for '$repo_path'"
+                popd >/dev/null
+                return 0
+                ;;
+        esac
+    fi
+
+    echo "${C_INFO}Pulling latest changes in '$repo_path'..."
+    "${sudo_cmd[@]}" git pull
+    popd >/dev/null
+}
+
 
 ####[ Trapping & Initial Checks ]###########################################################
 
 
 trap on_error ERR
-
-
-####[ Initial Checks ]######################################################################
 
 
 if command -v nginx &>/dev/null; then
@@ -162,16 +196,12 @@ fi
 if [[ ! -d "ModSecurity/.git" ]]; then
     echo "${C_INFO}Cloning ModSecurity repository..."
     git clone --depth 1 -b v3/master --single-branch https://github.com/owasp-modsecurity/ModSecurity
-    pushd ModSecurity >/dev/null
 else
     echo "${C_NOTE}ModSecurity repository already exists"
-    pushd ModSecurity >/dev/null
-    echo "${C_INFO}Updating existing ModSecurity repository..."
-    # TODO: Consider adding a check to ensure the local repository is on the correct branch
-    # and there are no local changes before pulling.
-    git pull
+    confirm_git_pull "ModSecurity"
 fi
 
+pushd ModSecurity >/dev/null
 echo "${C_INFO}Initializing and updating git submodules..."
 git submodule update --init --recursive
 
@@ -198,17 +228,15 @@ if [[ ! -d "ModSecurity-nginx/.git" ]]; then
     git clone --depth 1 https://github.com/owasp-modsecurity/ModSecurity-nginx
 else
     echo "${C_NOTE}ModSecurity-nginx repository already exists"
-    echo "${C_INFO}Updating existing ModSecurity-nginx repository..."
-    pushd ModSecurity-nginx >/dev/null
-    git pull
-    popd >/dev/null
+    confirm_git_pull "ModSecurity-nginx"
 fi
 
 echo "${C_INFO}Downloading Nginx source code for version '${C_NGINX_VERSION}'..."
-[[ -f "nginx-${C_NGINX_VERSION}.tar.gz" ]] && rm -f "nginx-${C_NGINX_VERSION}.tar.gz"
+rm -f "nginx-${C_NGINX_VERSION}.tar.gz"
 wget "https://nginx.org/download/nginx-${C_NGINX_VERSION}.tar.gz"
 
 echo "${C_INFO}Extracting Nginx source code..."
+rm -rf "nginx-${C_NGINX_VERSION}"
 tar -xzf "nginx-${C_NGINX_VERSION}.tar.gz"
 
 pushd "nginx-${C_NGINX_VERSION}" >/dev/null
@@ -266,10 +294,7 @@ fi
 cd coreruleset
 
 if [[ $coreruleset_clone_exists == true ]]; then
-    echo "${C_INFO}Updating existing OWASP Core Rule Set repository..."
-    # TODO: Consider adding a check to ensure the local repository is on the correct branch
-    # and there are no local changes before pulling.
-    sudo git pull
+    confirm_git_pull "" "true"
 fi
 
 echo "${C_INFO}Configuring OWASP Core Rule Set..."
