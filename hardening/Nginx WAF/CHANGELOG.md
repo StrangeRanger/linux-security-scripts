@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0 - 2026-07-03
+
+### Added
+
+- Added confirmation before pulling updates in existing Git checkouts when local changes are present.
+- Added ignore rules for generated ModSecurity, ModSecurity-nginx, and Nginx source build artifacts.
+
+### Changed
+
+- Clean up any existing downloaded Nginx tarball and extracted Nginx source directory before downloading and extracting a fresh copy.
+
 ## v1.0.0-beta.4 - 2026-05-24
 
 ### Changed
