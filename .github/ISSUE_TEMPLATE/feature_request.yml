@@ -1,0 +1,62 @@
+name: Feature request
+description: Suggest a script improvement, new auditing or hardening script, or documentation change.
+labels: ["awaiting review", "enhancement"]
+assignees: ["StrangeRanger"]
+
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      multiple: true
+      options:
+        - Improve an existing script
+        - Add a new standalone script
+        - Improve documentation or repository tooling
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected script or documentation
+      description: Select all that apply. Choose N/A if no existing script or documentation applies.
+      multiple: true
+      options:
+        - Lynis Installer
+        - Root Locker
+        - SSHD Hardening
+        - UFW Cloudflare
+        - Nginx WAF
+        - Documentation or repository
+        - N/A
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Describe the task you need to accomplish, who would benefit, and what the current scripts or documentation do not address.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe how the feature should work from the user's perspective. Include an example command, prompt, configuration change, or expected output if helpful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe current workarounds, manual steps, or existing tools you considered and why they do not meet this use case.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Link relevant upstream documentation, audit recommendations, or related issues.
