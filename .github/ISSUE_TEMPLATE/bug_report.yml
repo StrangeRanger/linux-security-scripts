@@ -1,46 +1,63 @@
-name: Bug report
-description: Report a problem with an auditing or hardening script, or its documentation.
+name: Bug Report
+description: Report a problem with an auditing or hardening script.
 labels: ["awaiting review", "bug"]
-assignees: ["StrangeRanger"]
 
 body:
   - type: dropdown
     id: component
     attributes:
-      label: Affected script or documentation
-      description: Select all that apply.
-      multiple: true
+      label: Affected Script
+      description: Select the script involved.
       options:
         - Lynis Installer
         - Root Locker
         - SSHD Hardening
         - UFW Cloudflare
         - Nginx WAF
-        - Documentation or repository
     validations:
       required: true
 
   - type: textarea
     id: problem
     attributes:
-      label: What went wrong?
-      description: Describe the expected result, actual behavior, and impact on auditing, system access, or a service.
+      label: Bug Description
+      description: Describe the problem and its impact.
     validations:
       required: true
 
   - type: textarea
     id: reproduction
     attributes:
-      label: Steps to reproduce
-      description: Note whether this was a first or repeat run and whether it was interrupted.
+      label: Steps to Reproduce
+      description: Describe the steps that led to the problem. Include the command you ran, relevant configuration details, and your responses to any prompts.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: Describe what actually happened, including any changes to configurations, system access, or service availability.
     validations:
       required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: Relevant output
-      description: Paste sanitized output, including the first error and surrounding lines, and the exit status if known. No code fences needed.
+      label: Relevant Output
+      description: Paste relevant output, including the first error and surrounding lines.
       render: text
 
   - type: textarea
@@ -48,22 +65,18 @@ body:
     attributes:
       label: Environment
       description: |
-        Include details relevant to the failure. Find the script version in its `# Version:` header.
-        For Nginx build failures, include sanitized `nginx -V` output and the Nginx installation source.
+        Include details relevant to the failure. You can find the script version in its `# Version:` header.
+        Describe any local changes to the script. Include the versions of affected software, such as OpenSSH, UFW, or Nginx.
+        For Nginx build failures, include sanitized `nginx -V` output. Specify how Nginx was installed.
       placeholder: |
         Linux distribution and release:
         Bash version (bash --version):
-        Script version and/or repository commit:
+        Script version:
+        Repository commit (if known):
+        Relevant software versions:
+        Local script changes:
 
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: |
-        Link related issues or describe when this last worked. Include only relevant, sanitized excerpts.
-        Useful details depend on the script:
-          - Lynis Installer: destination and whether it already existed; distinguish installer failures from later Lynis audit results.
-          - Root Locker: root password lock status and whether non-root sudo access still works.
-          - SSHD Hardening: relevant settings/includes, service name (ssh/sshd), and whether new SSH logins work.
-          - UFW Cloudflare: before/after rules, IPv4/IPv6 behavior, range download errors, and Cloudflare versus direct origin access.
-          - Nginx WAF: failing stage, reused build directories, configuration check results, and rule IDs for blocked requests.
+      label: Additional Context

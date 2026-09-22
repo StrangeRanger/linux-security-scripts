@@ -1,34 +1,29 @@
-name: Feature request
-description: Suggest a script improvement, new auditing or hardening script, or documentation change.
+name: Feature Request
+description: Propose a new script or improvements to an existing one.
 labels: ["awaiting review", "enhancement"]
-assignees: ["StrangeRanger"]
 
 body:
   - type: dropdown
     id: scope
     attributes:
       label: Scope
-      multiple: true
       options:
         - Improve an existing script
         - Add a new standalone script
-        - Improve documentation or repository tooling
     validations:
       required: true
 
   - type: dropdown
     id: component
     attributes:
-      label: Affected script or documentation
-      description: Select all that apply. Choose N/A if no existing script or documentation applies.
-      multiple: true
+      label: Affected Script
+      description: Select the affected script. Choose 'N/A' if you are requesting a new script.
       options:
         - Lynis Installer
         - Root Locker
         - SSHD Hardening
         - UFW Cloudflare
         - Nginx WAF
-        - Documentation or repository
         - N/A
     validations:
       required: true
@@ -36,27 +31,34 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: Problem or use case
-      description: Describe the task you need to accomplish, who would benefit, and what the current scripts or documentation do not address.
+      label: Problem or Use Case
+      description: Describe the task you need to accomplish. Explain who would benefit from the change and why the current scripts do not meet their needs.
     validations:
       required: true
 
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed behavior
-      description: Describe how the feature should work from the user's perspective. Include an example command, prompt, configuration change, or expected output if helpful.
+      label: Proposed Solution
+      description: Describe your proposed change. For a new script, explain the auditing or hardening task it should perform.
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Target Environment and Requirements
+      description: List the Linux distributions, releases, and software versions the change should support, if known. Note any required privileges and dependencies. Identify any existing configuration that must be preserved.
     validations:
       required: true
 
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives considered
-      description: Describe current workarounds, manual steps, or existing tools you considered and why they do not meet this use case.
+      label: Alternatives Considered
+      description: Describe the alternatives you considered, such as workarounds, manual steps, or existing tools. Explain why they do not meet your needs.
 
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: Link relevant upstream documentation, audit recommendations, or related issues.
+      label: Additional Context
