@@ -1,0 +1,82 @@
+name: Bug Report
+description: Report a problem with an auditing or hardening script.
+labels: ["awaiting review", "bug"]
+
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Script
+      description: Select the script involved.
+      options:
+        - Lynis Installer
+        - Root Locker
+        - SSHD Hardening
+        - UFW Cloudflare
+        - Nginx WAF
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Bug Description
+      description: Describe the problem and its impact.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Describe the steps that led to the problem. Include the command you ran, relevant configuration details, and your responses to any prompts.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: Describe what actually happened, including any changes to configurations, system access, or service availability.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Output
+      description: Paste relevant output, including the first error and surrounding lines.
+      render: text
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Include details relevant to the failure. You can find the script version in its `# Version:` header.
+        Describe any local changes to the script. Include the versions of affected software, such as OpenSSH, UFW, or Nginx.
+        For Nginx build failures, include sanitized `nginx -V` output. Specify how Nginx was installed.
+      placeholder: |
+        Linux distribution and release:
+        Bash version (bash --version):
+        Script version:
+        Repository commit (if known):
+        Relevant software versions:
+        Local script changes:
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context

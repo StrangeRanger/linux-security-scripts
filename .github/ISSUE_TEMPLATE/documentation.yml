@@ -1,0 +1,46 @@
+name: Documentation
+description: Suggest corrections, clarifications, or additions to the documentation.
+labels: ["awaiting review", "documentation"]
+
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Select the type of change you are requesting.
+      options:
+        - Correct existing information
+        - Clarify existing instructions
+        - Add missing content
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Affected Documentation
+      description: Identify the section that needs attention, including its file path. For new documentation, describe the topic it should cover.
+      placeholder: "For example: hardening/SSHD Hardening/README.md, Usage section."
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Reason for the Change
+      description: Explain why the documentation needs updating. Describe what you were trying to accomplish. If you followed the instructions, explain where you got stuck.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the changes you suggest. Include a draft revision if you have one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context

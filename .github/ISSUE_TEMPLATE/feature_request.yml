@@ -1,0 +1,64 @@
+name: Feature Request
+description: Propose a new script or improvements to an existing one.
+labels: ["awaiting review", "enhancement"]
+
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Improve an existing script
+        - Add a new standalone script
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Script
+      description: Select the affected script. Choose 'N/A' if you are requesting a new script.
+      options:
+        - Lynis Installer
+        - Root Locker
+        - SSHD Hardening
+        - UFW Cloudflare
+        - Nginx WAF
+        - N/A
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Use Case
+      description: Describe the task you need to accomplish. Explain who would benefit from the change and why the current scripts do not meet their needs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed change. For a new script, explain the auditing or hardening task it should perform.
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Target Environment and Requirements
+      description: List the Linux distributions, releases, and software versions the change should support, if known. Note any required privileges and dependencies. Identify any existing configuration that must be preserved.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe the alternatives you considered, such as workarounds, manual steps, or existing tools. Explain why they do not meet your needs.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
