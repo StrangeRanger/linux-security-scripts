@@ -194,6 +194,9 @@ fi
 ###
 ### [ Clone and build ModSecurity ]
 ###
+### TODO: Implement a check that offers to update ModSecurity, rather than get the newest
+###     version automatically.
+###
 
 if [[ ! -d "ModSecurity/.git" ]]; then
     echo "${C_INFO}Cloning ModSecurity repository..."
@@ -277,8 +280,9 @@ echo "${C_INFO}Configuring ModSecurity rules..."
 pushd ModSecurity >/dev/null
 sudo mkdir -p "$C_MODSEC_PATH"
 sudo cp unicode.mapping "$C_MODSEC_PATH/"
+## TODO: Add a check to prevent overwriting an existing modsecurity.conf if it has been
+##  modified.
 sudo cp modsecurity.conf-recommended "$C_MODSEC_CONF_PATH"
-
 echo "${C_INFO}Enabling ModSecurity in On mode..."
 sudo sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' "$C_MODSEC_CONF_PATH"
 popd >/dev/null
@@ -299,6 +303,8 @@ if [[ $coreruleset_clone_exists == true ]]; then
     confirm_git_pull "" "true"
 fi
 
+## TODO: Add a check to prevent overwriting an existing crs-setup.conf if it has been
+##  modified.
 echo "${C_INFO}Configuring OWASP Core Rule Set..."
 sudo cp crs-setup.conf.example crs-setup.conf
 popd >/dev/null
