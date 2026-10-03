@@ -16,6 +16,8 @@ The script installs required packages such as:
 - `autoconf`
 - `automake`
 - `build-essential`
+- `bison`
+- `flex`
 - `libcurl4-openssl-dev`
 - `libgeoip-dev`
 - `libpcre2-dev`
