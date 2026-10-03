@@ -108,6 +108,7 @@ ls -l /etc/nginx/modules-enabled/50-modsecurity.conf
 ## Tested On
 
 - Ubuntu 24.04
+- Ubuntu 26.04
 - Nginx 1.24.0 and later
 
 ## Version History
