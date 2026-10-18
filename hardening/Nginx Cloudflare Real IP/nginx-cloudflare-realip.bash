@@ -29,8 +29,8 @@ readonly C_SUCC="${C_GREEN}==>${C_NC} "
 readonly C_INFO="${C_BLUE}==>${C_NC} "
 readonly C_NOTE="${C_CYAN}==>${C_NC} "
 
-ipv4_response=()
-ipv6_response=()
+ipv4_response=""
+ipv6_response=""
 
 
 ####[ Initial Checks ]######################################################################
