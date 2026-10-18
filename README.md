@@ -40,6 +40,7 @@ Below is a list of scripts included in this repository. Each script has its own 
 | **Root Locker** | Lock the root account to prevent direct root logins. | Hardening | [README](hardening/Root%20Locker/README.md) / [Script](hardening/Root%20Locker/root-locker.bash) |
 | **SSHD Hardening** | Harden OpenSSH server configuration based on Lynis recommendations. | Hardening | [README](hardening/SSHD%20Hardening/README.md) / [Script](hardening/SSHD%20Hardening/harden-sshd.bash) |
 | **UFW Cloudflare** | Configure UFW to allow HTTP/HTTPS traffic only from Cloudflare IP ranges. | Hardening | [README](hardening/UFW%20Cloudflare/README.md) / [Script](hardening/UFW%20Cloudflare/ufw-cloudflare.bash) |
+| **Nginx Cloudflare Real IP** | Configure Nginx to trust Cloudflare IP ranges and use the `CF-Connecting-IP` header for the true client IP. | Hardening | [README](hardening/Nginx%20Cloudflare%20Real%20IP/README.md) / [Script](hardening/Nginx%20Cloudflare%20Real%20IP/nginx-cloudflare-realip.bash) |
 | **Nginx WAF** | Install and configure ModSecurity with the OWASP Core Rule Set for Nginx. | Hardening | [README](hardening/Nginx%20WAF/README.md) / [Script](hardening/Nginx%20WAF/nginx-waf.bash) |
 
 ## Getting Started
